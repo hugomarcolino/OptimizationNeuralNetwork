@@ -10,7 +10,7 @@ import util.Util;
 
 public class Teste {
 
-	public static String caminho = "C:/Users/Hugo/SkyDrive/teste/resultados/";
+	public static String caminho = "C:/Users/User/OneDrive/teste/resultados/";
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -178,7 +178,7 @@ public class Teste {
 		ArrayList<double[][]> entradas = new ArrayList<double[][]>();
 		ArrayList<double[][]> saidas = new ArrayList<double[][]>();
 		
-		for (int i = 1; i <= 1; i++) {
+		for (int i = 1; i <= 5; i++) {
 			double[][] entrada = Util.lerImagem(caminho+"base/"+i+".bmp");
 			double[][] saida = Util.lerImagem(caminho+"baseSobel/"+i+"_sobelVertical.bmp");
 			

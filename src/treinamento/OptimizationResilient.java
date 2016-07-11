@@ -56,8 +56,8 @@ public class OptimizationResilient {
 	    neuralProblem.setRede(rede);
 	    
 	    algorithm = new gGA(neuralProblem);
-	    algorithm.setInputParameter("populationSize", 100);
-	    algorithm.setInputParameter("maxEvaluations", 5000);
+	    algorithm.setInputParameter("populationSize", 250);
+	    algorithm.setInputParameter("maxEvaluations", 100000);
 
 	    HashMap parameters;
 	    parameters = new HashMap() ;
