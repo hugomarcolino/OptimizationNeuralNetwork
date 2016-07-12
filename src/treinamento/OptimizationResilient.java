@@ -35,7 +35,14 @@ public class OptimizationResilient {
 	
 	public RedeNeural treinamentoRede(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas, int nCiclos) throws ClassNotFoundException, JMException {
 		
-	    //Problem problem;       
+		rede = treinamentoGA(rede, entradas, saidas, 250, 50000);
+		rede = treinamentoResilient(rede, entradas, saidas, nCiclos);
+		
+		return rede;
+	}
+	
+	public RedeNeural treinamentoGA(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas, int nPopulacao, int nCiclos) throws ClassNotFoundException, JMException {
+	
 	    Algorithm algorithm;       
 	    Operator crossover;       
 	    Operator mutation;       
@@ -56,8 +63,8 @@ public class OptimizationResilient {
 	    neuralProblem.setRede(rede);
 	    
 	    algorithm = new gGA(neuralProblem);
-	    algorithm.setInputParameter("populationSize", 250);
-	    algorithm.setInputParameter("maxEvaluations", 100000);
+	    algorithm.setInputParameter("populationSize", nPopulacao);
+	    algorithm.setInputParameter("maxEvaluations", nCiclos);
 
 	    HashMap parameters;
 	    parameters = new HashMap() ;
@@ -116,6 +123,11 @@ public class OptimizationResilient {
 			rede.getCamadas()[c].setBiasCamada(biasCamada.get(c));
 		}
 		//---
+		
+		return rede;
+	}
+	
+	public RedeNeural treinamentoResilient(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas, int nCiclos) {		   
 		
 		List<Integer> ordemTreino = new ArrayList<Integer>();
 		for (int i = 0; i < entradas.size(); i++) {
