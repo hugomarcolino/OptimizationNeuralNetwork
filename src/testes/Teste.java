@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rede.RedeNeural;
+import treinamento.OptimizationNeural;
 import treinamento.OptimizationResilient;
 import treinamento.Resilientpropagation;
 import util.Util;
 
 public class Teste {
 
-	public static String caminho = "C:/Users/User/OneDrive/teste/resultados/";
+	public static String caminho = "C:/Users/Hugo/OneDrive/teste/resultados/";
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -19,12 +20,52 @@ public class Teste {
 		//testeBerkeleyMedia();
 		
 		//testeBerkeleySobel();
-		testeBerkeleySobelVertical();
+		//testeBerkeleySobelVertical();
 		//testeBerkeleySobelHorizontal();
 		
 		//testeBerkeleySegmentacao();
+		
+		//testeBerkeleySegmentacao();
+		
+		testeDriveSegmentacao();
 	}
 	
+	private static void testeDriveSegmentacao() throws Exception {
+		ArrayList<double[][]> entradas = new ArrayList<double[][]>();
+		ArrayList<double[][]> saidas = new ArrayList<double[][]>();
+		
+		for (int i = 21; i <= 25; i++) {
+			double[][] entrada = Util.lerImagem(caminho+"drive/"+i+".bmp");
+			double[][] saida = Util.lerImagem(caminho+"drive/"+i+"_gt.bmp");
+			
+			entrada = Util.dividirMatriz(entrada, 255);
+			saida = Util.dividirMatriz(saida, 255);			
+			
+			entradas.add(entrada);
+			saidas.add(saida);
+		}
+		
+		RedeNeural rede = new RedeNeural(360, 360, 2, 3, 0);
+		
+		OptimizationNeural treinamento = new OptimizationNeural();
+		treinamento.treinamentoRede(rede, entradas, saidas, 2000);
+		
+		Util.escreverPesos(caminho+"Resultado_8/drive/segmentacao/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
+		Util.escreverErros(caminho+"Resultado_8/drive/segmentacao/erros.txt", treinamento.getErros());
+		
+		for (int i = 21; i <= 40; i++) {
+			double[][] imagemEntrada = Util.lerImagem(caminho+"drive/"+i+".bmp");
+			
+			imagemEntrada = Util.dividirMatriz(imagemEntrada, 255);
+			
+			List<double[][]> saidasRede = rede.estimularListaSaidas(imagemEntrada);
+			for (int s = 0; s < saidasRede.size(); s++) {
+				double[][] saidaCamada =  Util.multiplicarMatriz(saidasRede.get(s), 255);
+				Util.salvaImagem(caminho+"Resultado_8/drive/segmentacao/"+i+"_"+s+".bmp", saidaCamada);
+			}
+		}
+	}
+
 	public static void testeBerkeleyHistograma() throws Exception {
 
 		ArrayList<double[][]> entradas = new ArrayList<double[][]>();
@@ -178,7 +219,7 @@ public class Teste {
 		ArrayList<double[][]> entradas = new ArrayList<double[][]>();
 		ArrayList<double[][]> saidas = new ArrayList<double[][]>();
 		
-		for (int i = 1; i <= 5; i++) {
+		for (int i = 1; i <= 1; i++) {
 			double[][] entrada = Util.lerImagem(caminho+"base/"+i+".bmp");
 			double[][] saida = Util.lerImagem(caminho+"baseSobel/"+i+"_sobelVertical.bmp");
 			
