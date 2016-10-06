@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rede.RedeNeural;
+import smile.math.DoubleArrayList;
+import smile.math.distance.EuclideanDistance;
 import jmetal.core.Problem;
 import jmetal.core.Solution;
 import jmetal.core.Variable;
@@ -118,7 +120,7 @@ public class RedeNeuralProblem extends Problem {
 		//---
 		
 		//CALCULAR ERRO
-		double erro = calcularErro(rede, entradas, saidas);
+		double erro = calcularErroDistancia(rede, entradas, saidas);
 		//---
 		
 		return erro;
@@ -141,6 +143,34 @@ public class RedeNeuralProblem extends Problem {
 			}
 		}
 		erro /= nSoma;
+		
+		return erro;
+	}
+
+	private double calcularErroDistancia(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas) {
+		
+		double erro = 0;
+		
+		DoubleArrayList saidaArray = new DoubleArrayList();
+		DoubleArrayList saidaRedeArray = new DoubleArrayList();
+		
+		for (int a = 0; a < entradas.size(); a++) {
+			double[][] entrada = entradas.get(a);
+			double[][] saida = saidas.get(a);
+			
+			double[][] saidaRede = rede.estimular(entrada);
+			
+			for (int i = 0; i < entrada.length; i++) {
+				saidaArray.add(saida[i]);
+				saidaRedeArray.add(saidaRede[i]);
+			}
+		}
+		
+		EuclideanDistance ed = new EuclideanDistance();
+		
+		
+		
+		erro = ed.d(saidaArray.toArray(), saidaRedeArray.toArray());
 		
 		return erro;
 	}

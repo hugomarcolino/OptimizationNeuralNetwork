@@ -40,21 +40,21 @@ public class OptimizationNeural {
 	    neuralProblem.setRede(rede);
 	    
 	    algorithm = new gGA(neuralProblem);
-	    algorithm.setInputParameter("populationSize", 500);
+	    algorithm.setInputParameter("populationSize", 100);
 	    algorithm.setInputParameter("maxEvaluations", nCiclos);
 
 	    HashMap parameters = new HashMap();
 	    parameters.put("probability", 1.0);
-	    parameters.put("distributionIndex", 0.0) ;
+	    parameters.put("distributionIndex", 20.0) ;
 	    crossover = CrossoverFactory.getCrossoverOperator("SBXCrossover", parameters);                   
 
 	    parameters = new HashMap();
-	    parameters.put("probability", 1.0/neuralProblem.getNumberOfVariables()) ;
-	    parameters.put("distributionIndex", 0.0) ;
+	    parameters.put("probability", 0.1) ;
+	    parameters.put("distributionIndex", 20.0) ;
 	    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);                    
 
 	    parameters = new HashMap();
-	    selection = SelectionFactory.getSelectionOperator("BinaryTournament2", parameters) ;                            
+	    selection = SelectionFactory.getSelectionOperator("BinaryTournament", parameters) ;                            
 	    
 	    algorithm.addOperator("crossover", crossover);
 	    algorithm.addOperator("mutation", mutation);

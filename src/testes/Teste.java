@@ -84,7 +84,7 @@ public class Teste {
 		RedeNeural rede = new RedeNeural(360, 360, 1, 3, 0);
 		
 		OptimizationNeural treinamento = new OptimizationNeural();
-		treinamento.treinamentoRede(rede, entradas, saidas, 10000);
+		treinamento.treinamentoRede(rede, entradas, saidas, 15000);
 		
 		Util.escreverPesos(caminho+"Resultado_8/drive/segmentacao/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
 		Util.escreverErros(caminho+"Resultado_8/drive/segmentacao/erros.txt", treinamento.getErros());
