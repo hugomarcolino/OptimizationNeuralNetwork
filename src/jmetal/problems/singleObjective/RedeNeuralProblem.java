@@ -26,6 +26,9 @@ import java.util.List;
 import rede.RedeNeural;
 import smile.math.DoubleArrayList;
 import smile.math.distance.EuclideanDistance;
+import smile.math.distance.JensenShannonDistance;
+import smile.math.distance.MahalanobisDistance;
+import smile.math.distance.ManhattanDistance;
 import jmetal.core.Problem;
 import jmetal.core.Solution;
 import jmetal.core.Variable;
@@ -167,10 +170,10 @@ public class RedeNeuralProblem extends Problem {
 		}
 		
 		EuclideanDistance ed = new EuclideanDistance();
-		
-		
-		
 		erro = ed.d(saidaArray.toArray(), saidaRedeArray.toArray());
+		
+//		ManhattanDistance md = new ManhattanDistance();
+//		erro = md.d(saidaArray.toArray(), saidaRedeArray.toArray());
 		
 		return erro;
 	}

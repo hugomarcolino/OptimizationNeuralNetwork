@@ -23,7 +23,9 @@ public class OptimizationNeural {
 	
 	private List<Double> erros = new ArrayList<Double>();
 	
-	public RedeNeural treinamentoRede(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas, int nCiclos) throws ClassNotFoundException, JMException {
+	public RedeNeural treinamentoRede(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas,
+			double taxaCruzamento, double taxaMutacao, int nPopulacao, int nCiclos ) throws ClassNotFoundException, JMException {
+
 		
 	    //Problem problem;       
 	    Algorithm algorithm;       
@@ -40,16 +42,16 @@ public class OptimizationNeural {
 	    neuralProblem.setRede(rede);
 	    
 	    algorithm = new gGA(neuralProblem);
-	    algorithm.setInputParameter("populationSize", 100);
-	    algorithm.setInputParameter("maxEvaluations", nCiclos);
+	    algorithm.setInputParameter("populationSize", nPopulacao);
+	    algorithm.setInputParameter("maxEvaluations", nCiclos*nPopulacao);
 
 	    HashMap parameters = new HashMap();
-	    parameters.put("probability", 1.0);
+	    parameters.put("probability", taxaCruzamento);
 	    parameters.put("distributionIndex", 20.0) ;
 	    crossover = CrossoverFactory.getCrossoverOperator("SBXCrossover", parameters);                   
 
 	    parameters = new HashMap();
-	    parameters.put("probability", 0.1) ;
+	    parameters.put("probability", taxaMutacao) ;
 	    parameters.put("distributionIndex", 20.0) ;
 	    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);                    
 
