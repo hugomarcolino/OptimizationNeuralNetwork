@@ -1,6 +1,5 @@
 package treinamento;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,10 +17,6 @@ import rede.RedeNeural;
 
 public class OptimizationNeural {
 	
-	private List<double[]> biasTreinamento = new ArrayList<double[]>();
-	private List<double[][][]> pesosTreinamento = new ArrayList<double[][][]>();
-	
-	private List<Double> erros = new ArrayList<Double>();
 	
 	public SolutionSet treinamentoRede(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas,
 			double taxaCruzamento, double taxaMutacao, int nPopulacao, int nCiclos ) throws ClassNotFoundException, JMException {
@@ -63,11 +58,6 @@ public class OptimizationNeural {
 	    algorithm.addOperator("selection", selection);
 	 
 	    SolutionSet population = algorithm.execute();
-	    
-	    System.out.println("Objectives values have been writen to file FUN");
-	    population.printObjectivesToFile("FUN");
-	    System.out.println("Variables values have been writen to file VAR");
-	    population.printVariablesToFile("VAR");          
 		
 	    List<Solution> solutionsList_ = population.getSolutionsList_();
 	    int numberOfVariables = solutionsList_.get(0).getDecisionVariables().length ;
@@ -76,18 +66,9 @@ public class OptimizationNeural {
 	    	position[j] = solutionsList_.get(0).getDecisionVariables()[j].getValue();
         }
 	    
+	    rede.setPesos(position);
+	    
 		return population;
 	}
-		
-	public List<double[]> getBiasTreinamento() {
-		return biasTreinamento;
-	}
 
-	public List<double[][][]> getPesosTreinamento() {
-		return pesosTreinamento;
-	}
-
-	public List<Double> getErros() {
-		return erros;
-	}
 }

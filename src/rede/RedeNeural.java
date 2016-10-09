@@ -113,7 +113,7 @@ public class RedeNeural {
 		return camadas;
 	}
 	
-	public void setarPesos(double[] position){
+	public void setPesos(double[] position){
 		
   		int p = 0;
   		
