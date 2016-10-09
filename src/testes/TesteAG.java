@@ -9,13 +9,13 @@ import util.Util;
 
 public class TesteAG {
 
-	public static String caminho = "C:/Users/Hugo/OneDrive/teste/resultados/";
+	public static String caminho = "C:/Users/User/OneDrive/teste/resultados/";
 
 	public static final double TAXA_CRUZAMENTO  = 1; 
 	public static final double TAXA_MUTACAO     = 0.1; 
 	
 	public static final int    	TAM_POPULACAO   = 100; 
-	public static final int    	MAX_GERACOES  	= 1000;
+	public static final int    	MAX_GERACOES  	= 100;
 	
 	
 	public static void main(String[] args) throws Exception {
@@ -28,8 +28,8 @@ public class TesteAG {
 		//testeBerkeleySobelVertical();
 		//testeBerkeleySobelHorizontal();
 		
-		//testePH2Segmentacao();
-		testeDriveSegmentacao();
+		testePH2Segmentacao();
+		//testeDriveSegmentacao();
 		//testeBerkeleySegmentacao();
 		
 	}

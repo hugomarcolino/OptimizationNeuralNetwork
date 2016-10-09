@@ -1,5 +1,8 @@
 package rede;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import camada.Camada;
 import camada.CamadaConvolucao;
 import camada.CamadaReconstrucao;
@@ -109,4 +112,35 @@ public class RedeNeural {
 	public Camada[] getCamadas() {
 		return camadas;
 	}
+	
+	public void setarPesos(double[] position){
+		
+  		int p = 0;
+  		
+  		List<Double> biasCamada = new ArrayList<Double>();
+  		List<double[][]> pesosCamadas = new ArrayList<double[][]>();
+  		
+  		for (int c = 0; c < this.getCamadas().length; c++) {			
+  			double[][] pesosCamada = new double[this.getTamCampo()][this.getTamCampo()];
+  			
+  			for (int i = 0; i < pesosCamada.length; i++) {
+  				for (int j = 0; j < pesosCamada.length; j++) {
+  					pesosCamada[i][j] = position[p++]; 
+  				}
+  			}
+  			pesosCamadas.add(pesosCamada);
+  		}
+  		
+  		for (int c = 0; c < this.getCamadas().length; c++) {			
+  			biasCamada.add(position[p++]);
+  		}
+  		
+  		for (int c = 0; c < this.getCamadas().length; c++) {
+  			this.getCamadas()[c].setPesosCamada(pesosCamadas.get(c));
+  			this.getCamadas()[c].setBiasCamada(biasCamada.get(c));
+  		}
+
+		
+	}
+	
 }

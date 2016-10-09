@@ -23,7 +23,7 @@ public class OptimizationNeural {
 	
 	private List<Double> erros = new ArrayList<Double>();
 	
-	public RedeNeural treinamentoRede(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas,
+	public SolutionSet treinamentoRede(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas,
 			double taxaCruzamento, double taxaMutacao, int nPopulacao, int nCiclos ) throws ClassNotFoundException, JMException {
 
 		
@@ -75,36 +75,8 @@ public class OptimizationNeural {
 	    for (int j = 0; j < numberOfVariables; j++) {
 	    	position[j] = solutionsList_.get(0).getDecisionVariables()[j].getValue();
         }
-		
-	    //SETAR PESOS
-  		int  p = 0;
-  		
-  		List<Double> biasCamada = new ArrayList<Double>();
-  		List<double[][]> pesosCamadas = new ArrayList<double[][]>();
-  		
-  		for (int c = 0; c < rede.getCamadas().length; c++) {			
-  			double[][] pesosCamada = new double[rede.getTamCampo()][rede.getTamCampo()];
-  			
-  			for (int i = 0; i < pesosCamada.length; i++) {
-  				for (int j = 0; j < pesosCamada.length; j++) {
-  					pesosCamada[i][j] = position[p++]; 
-  				}
-  			}
-  			pesosCamadas.add(pesosCamada);
-  		}
-  		
-  		for (int c = 0; c < rede.getCamadas().length; c++) {			
-  			biasCamada.add(position[p++]);
-  		}
-  		
-  		for (int c = 0; c < rede.getCamadas().length; c++) {
-  			rede.getCamadas()[c].setPesosCamada(pesosCamadas.get(c));
-  			rede.getCamadas()[c].setBiasCamada(biasCamada.get(c));
-  		}
-  		//---
 	    
-	    
-		return rede;
+		return population;
 	}
 		
 	public List<double[]> getBiasTreinamento() {

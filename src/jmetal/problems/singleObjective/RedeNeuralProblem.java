@@ -20,15 +20,11 @@
 
 package jmetal.problems.singleObjective;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import rede.RedeNeural;
 import smile.math.DoubleArrayList;
 import smile.math.distance.EuclideanDistance;
-import smile.math.distance.JensenShannonDistance;
-import smile.math.distance.MahalanobisDistance;
-import smile.math.distance.ManhattanDistance;
 import jmetal.core.Problem;
 import jmetal.core.Solution;
 import jmetal.core.Variable;
@@ -94,37 +90,11 @@ public class RedeNeuralProblem extends Problem {
   } // evaluate
 
   
-  public double evaluateRede(double[] position) { 
-		
-	  int  p = 0;
-		
-		List<Double> biasCamada = new ArrayList<Double>();
-		List<double[][]> pesosCamadas = new ArrayList<double[][]>();
-		
-		for (int c = 0; c < rede.getCamadas().length; c++) {			
-			double[][] pesosCamada = new double[rede.getTamCampo()][rede.getTamCampo()];
-			
-			for (int i = 0; i < pesosCamada.length; i++) {
-				for (int j = 0; j < pesosCamada.length; j++) {
-					pesosCamada[i][j] = position[p++]; 
-				}
-			}
-			pesosCamadas.add(pesosCamada);
-		}
-		
-		for (int c = 0; c < rede.getCamadas().length; c++) {			
-			biasCamada.add(position[p++]);
-		}
-		
-		for (int c = 0; c < rede.getCamadas().length; c++) {
-			rede.getCamadas()[c].setPesosCamada(pesosCamadas.get(c));
-			rede.getCamadas()[c].setBiasCamada(biasCamada.get(c));
-		}
-		//---
-		
-		//CALCULAR ERRO
-		double erro = calcularErroDistancia(rede, entradas, saidas);
-		//---
+  	public double evaluateRede(double[] position) { 
+  		
+	 	rede.setarPesos(position);
+  	
+  		double erro = calcularErroDistancia(rede, entradas, saidas);
 		
 		return erro;
 	}
@@ -154,26 +124,25 @@ public class RedeNeuralProblem extends Problem {
 		
 		double erro = 0;
 		
-		DoubleArrayList saidaArray = new DoubleArrayList();
-		DoubleArrayList saidaRedeArray = new DoubleArrayList();
-		
-		for (int a = 0; a < entradas.size(); a++) {
-			double[][] entrada = entradas.get(a);
-			double[][] saida = saidas.get(a);
+		for (int i = 0; i < entradas.size(); i++) {
+			
+			double[][] entrada = entradas.get(i);
+			double[][] saida = saidas.get(i);
 			
 			double[][] saidaRede = rede.estimular(entrada);
 			
-			for (int i = 0; i < entrada.length; i++) {
-				saidaArray.add(saida[i]);
-				saidaRedeArray.add(saidaRede[i]);
+			DoubleArrayList saidaArray = new DoubleArrayList();
+			DoubleArrayList saidaRedeArray = new DoubleArrayList();
+
+			for (int linha = 0; linha < saida.length; linha++) {
+				saidaArray.add(saida[linha]);
+				saidaRedeArray.add(saidaRede[linha]);
 			}
+			
+			EuclideanDistance ed = new EuclideanDistance();
+			erro += ed.d(saidaArray.toArray(), saidaRedeArray.toArray());
+			
 		}
-		
-		EuclideanDistance ed = new EuclideanDistance();
-		erro = ed.d(saidaArray.toArray(), saidaRedeArray.toArray());
-		
-//		ManhattanDistance md = new ManhattanDistance();
-//		erro = md.d(saidaArray.toArray(), saidaRedeArray.toArray());
 		
 		return erro;
 	}
