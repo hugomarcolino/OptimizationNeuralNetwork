@@ -17,7 +17,7 @@ public class Teste {
 		//testeBerkeleySobelVertical();
 		//testeBerkeleySobelHorizontal();
 		
-		//testePH2Segmentacao(´[);
+		//testePH2Segmentacao();
 		
 	}
 	
@@ -113,14 +113,11 @@ public class Teste {
 		
 		RedeNeural rede = new RedeNeural(315, 477, 1, 3, 0);
 		
-//		Resilientpropagation treinamento = new Resilientpropagation();
-//		treinamento.treinamentoRede(rede, entradas, saidas, 100);
-		
 		Resilientpropagation treinamento = new Resilientpropagation();
 		treinamento.treinamentoRede(rede, entradas, saidas, 100);
 		
-		Util.escreverPesos(caminho+"Resultado_8/berkeley/sobelVertical/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
-		Util.escreverErros(caminho+"Resultado_8/berkeley/sobelVertical/erros.txt", treinamento.getErros());
+		Util.escreverPesos(caminho+"Resultados/berkeley/sobelVertical/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
+		Util.escreverErros(caminho+"Resultados/berkeley/sobelVertical/erros.txt", treinamento.getErros());
 		
 		for (int i = 1; i <= 20; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"base/"+i+".bmp");
@@ -130,7 +127,7 @@ public class Teste {
 			List<double[][]> saidasRede = rede.estimularListaSaidas(imagemEntrada);
 			for (int s = 0; s < saidasRede.size(); s++) {
 				double[][] saidaCamada =  Util.multiplicarMatriz(saidasRede.get(s), 255);
-				Util.salvaImagem(caminho+"Resultado_8/berkeley/sobelVertical/"+i+"_"+s+".bmp", saidaCamada);
+				Util.salvaImagem(caminho+"Resultados/berkeley/sobelVertical/"+i+"_"+s+".bmp", saidaCamada);
 			}
 		}
 	}	
