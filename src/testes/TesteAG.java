@@ -116,9 +116,6 @@ public class TesteAG {
 		
 		RedeNeural rede = new RedeNeural(315, 477, 1, 3, 0);
 		
-//		OptimizationNeural treinamento = new OptimizationNeural();
-//		treinamento.treinamentoRede(rede, entradas, saidas, 
-		
 		OptimizationNeural treinamento = new OptimizationNeural();
 		treinamento.treinamentoRede(rede, entradas, saidas,
 				TAXA_CRUZAMENTO, TAXA_MUTACAO, TAM_POPULACAO, MAX_GERACOES);

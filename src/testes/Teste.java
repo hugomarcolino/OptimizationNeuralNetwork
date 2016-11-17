@@ -9,12 +9,12 @@ import util.Util;
 
 public class Teste {
 
-	public static String caminho = "C:/Users/Hugo/OneDrive/teste/resultados/";
+	public static String caminho = "C:/Users/User/OneDrive/teste/resultados/";
 	
 	public static void main(String[] args) throws Exception {
 		
-		testeBerkeleySobel();
-		//testeBerkeleySobelVertical();
+		//testeBerkeleySobel();
+		testeBerkeleySobelVertical();
 		//testeBerkeleySobelHorizontal();
 		
 		//testePH2Segmentacao();
@@ -42,8 +42,8 @@ public class Teste {
 		Resilientpropagation treinamento = new Resilientpropagation();
 		treinamento.treinamentoRede(rede, entradas, saidas, 1000);
 		
-		Util.escreverPesos(caminho+"Resultado_8/ph2/segmentacao/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
-		Util.escreverErros(caminho+"Resultado_8/ph2/segmentacao/erros.txt", treinamento.getErros());
+		Util.escreverPesos(caminho+"Resultados/ph2/segmentacao/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
+		Util.escreverErros(caminho+"Resultados/ph2/segmentacao/erros.txt", treinamento.getErros());
 		
 		for (int i = 1; i <= 200; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"ph2Reduzida/"+i+".bmp");
@@ -53,7 +53,7 @@ public class Teste {
 			List<double[][]> saidasRede = rede.estimularListaSaidas(imagemEntrada);
 			for (int s = 0; s < saidasRede.size(); s++) {
 				double[][] saidaCamada =  Util.multiplicarMatriz(saidasRede.get(s), 255);
-				Util.salvaImagem(caminho+"Resultado_8/ph2/segmentacao/"+i+"_"+s+".bmp", saidaCamada);
+				Util.salvaImagem(caminho+"Resultados/ph2/segmentacao/"+i+"_"+s+".bmp", saidaCamada);
 			}
 		}
 	}
@@ -79,8 +79,8 @@ public class Teste {
 		Resilientpropagation treinamento = new Resilientpropagation();
 		treinamento.treinamentoRede(rede, entradas, saidas, 100);
 		
-		Util.escreverPesos(caminho+"Resultado_8/berkeley/sobel/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
-		Util.escreverErros(caminho+"Resultado_8/berkeley/sobel/erros.txt", treinamento.getErros());
+		Util.escreverPesos(caminho+"Resultados/berkeley/sobel/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
+		Util.escreverErros(caminho+"Resultados/berkeley/sobel/erros.txt", treinamento.getErros());
 		
 		for (int i = 1; i <= 20; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"base/"+i+".bmp");
@@ -90,7 +90,7 @@ public class Teste {
 			List<double[][]> saidasRede = rede.estimularListaSaidas(imagemEntrada);
 			for (int s = 0; s < saidasRede.size(); s++) {
 				double[][] saidaCamada =  Util.multiplicarMatriz(saidasRede.get(s), 255);
-				Util.salvaImagem(caminho+"Resultado_8/berkeley/sobel/"+i+"_"+s+".bmp", saidaCamada);
+				Util.salvaImagem(caminho+"Resultados/berkeley/sobel/"+i+"_"+s+".bmp", saidaCamada);
 			}
 		}
 	}
@@ -114,7 +114,7 @@ public class Teste {
 		RedeNeural rede = new RedeNeural(315, 477, 1, 3, 0);
 		
 		Resilientpropagation treinamento = new Resilientpropagation();
-		treinamento.treinamentoRede(rede, entradas, saidas, 100);
+		treinamento.treinamentoRede(rede, entradas, saidas, 200);
 		
 		Util.escreverPesos(caminho+"Resultados/berkeley/sobelVertical/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
 		Util.escreverErros(caminho+"Resultados/berkeley/sobelVertical/erros.txt", treinamento.getErros());
@@ -153,8 +153,8 @@ public class Teste {
 		Resilientpropagation treinamento = new Resilientpropagation();
 		treinamento.treinamentoRede(rede, entradas, saidas, 100);
 		
-		Util.escreverPesos(caminho+"Resultado_8/berkeley/sobelHorizontal/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
-		Util.escreverErros(caminho+"Resultado_8/berkeley/sobelHorizontal/erros.txt", treinamento.getErros());
+		Util.escreverPesos(caminho+"Resultados/berkeley/sobelHorizontal/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
+		Util.escreverErros(caminho+"Resultados/berkeley/sobelHorizontal/erros.txt", treinamento.getErros());
 		
 		for (int i = 1; i <= 20; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"base/"+i+".bmp");
@@ -164,7 +164,7 @@ public class Teste {
 			List<double[][]> saidasRede = rede.estimularListaSaidas(imagemEntrada);
 			for (int s = 0; s < saidasRede.size(); s++) {
 				double[][] saidaCamada =  Util.multiplicarMatriz(saidasRede.get(s), 255);
-				Util.salvaImagem(caminho+"Resultado_8/berkeley/sobelHorizontal/"+i+"_"+s+".bmp", saidaCamada);
+				Util.salvaImagem(caminho+"Resultados/berkeley/sobelHorizontal/"+i+"_"+s+".bmp", saidaCamada);
 			}
 		}
 	}
