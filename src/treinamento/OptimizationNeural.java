@@ -41,16 +41,16 @@ public class OptimizationNeural {
 
 	    HashMap parameters = new HashMap();
 	    parameters.put("probability", taxaCruzamento);
-	    parameters.put("distributionIndex", 20.0) ;
+	    parameters.put("distributionIndex", 20.0);
 	    crossover = CrossoverFactory.getCrossoverOperator("SBXCrossover", parameters);                   
 
 	    parameters = new HashMap();
-	    parameters.put("probability", taxaMutacao) ;
-	    parameters.put("distributionIndex", 20.0) ;
+	    parameters.put("probability", taxaMutacao);
+	    parameters.put("distributionIndex", 20.0);
 	    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);                    
 
 	    parameters = new HashMap();
-	    selection = SelectionFactory.getSelectionOperator("BinaryTournament", parameters) ;                            
+	    selection = SelectionFactory.getSelectionOperator("BinaryTournament", parameters);                            
 	    
 	    algorithm.addOperator("crossover", crossover);
 	    algorithm.addOperator("mutation", mutation);
@@ -59,7 +59,7 @@ public class OptimizationNeural {
 	    SolutionSet population = algorithm.execute();
 		
 	    List<Solution> solutionsList_ = population.getSolutionsList_();
-	    int numberOfVariables = solutionsList_.get(0).getDecisionVariables().length ;
+	    int numberOfVariables = solutionsList_.get(0).getDecisionVariables().length;
 	    double[] position = new double[tam];
 	    for (int j = 0; j < numberOfVariables; j++) {
 	    	position[j] = solutionsList_.get(0).getDecisionVariables()[j].getValue();
