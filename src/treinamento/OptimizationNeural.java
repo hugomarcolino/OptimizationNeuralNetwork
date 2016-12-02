@@ -17,7 +17,6 @@ import rede.RedeNeural;
 
 public class OptimizationNeural {
 	
-	
 	public SolutionSet treinamentoRede(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas,
 			double taxaCruzamento, double taxaMutacao, int nPopulacao, int nCiclos ) throws ClassNotFoundException, JMException {
 		

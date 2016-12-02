@@ -83,7 +83,7 @@ public class TesteAG {
 		
 		OptimizationNeural treinamento = new OptimizationNeural();
 		treinamento.treinamentoRede(rede, entradas, saidas,
-				TAXA_CRUZAMENTO, TAXA_MUTACAO, TAM_POPULACAO, MAX_GERACOES);
+								TAXA_CRUZAMENTO, TAXA_MUTACAO, TAM_POPULACAO, MAX_GERACOES);
 		
 		for (int i = 1; i <= 20; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"base/"+i+".bmp");
