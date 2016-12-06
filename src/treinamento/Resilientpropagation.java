@@ -31,9 +31,8 @@ public class Resilientpropagation {
 		}
 		
 		int ciclo = 0;
-		boolean treinar = true;
 		
-		while (treinar) {
+		while ( this.executarTreinamento(100, 0.01) ) {
 			System.out.println("Ciclo: "+ciclo++);
 			Collections.shuffle(ordemTreino);
 			
@@ -49,49 +48,6 @@ public class Resilientpropagation {
 
 			this.armazenaPesos(rede);
 			this.armazenaErros(rede, entradasValidacao, saidasValidacao);
-
-			treinar = !this.pararTreinamento(100, 0.01);
-			
-			//this.imprimePesos(rede);
-			//System.out.println("================");
-
-		}
-
-		return rede;
-	}
-
-	public RedeNeural treinamentoSeparadoRede(RedeNeural rede, List<double[][]> entradasTreino, List<double[][]> saidasTreino, 
-			List<double[][]> entradasValidacao, List<double[][]> saidasValidacao ){
-
-		List<Integer> ordemTreino = new ArrayList<Integer>();
-		for (int i = 0; i < entradasTreino.size(); i++) {
-			ordemTreino.add(i);
-		}
-		
-		int ciclo = 0;
-		boolean treinar = true;
-		
-		while (treinar) {
-			System.out.println("Ciclo: "+ciclo++);
-			Collections.shuffle(ordemTreino);
-			
-			for (int j = 0; j < ordemTreino.size(); j++) {
-				int nImagem = ordemTreino.get(j);
-				System.out.println("Treinando.. Imagem "+(nImagem+1));
-				this.treinarRede(rede, entradasTreino.get(nImagem), saidasTreino.get(nImagem));
-				this.zerarSensibilidades(rede);				
-			}
-
-			this.reajustarPesos(rede);			
-			this.zerarGradientes(rede);
-
-			this.armazenaPesos(rede);
-			this.armazenaErros(rede, entradasValidacao, saidasValidacao);
-
-			treinar = !this.pararTreinamento(100, 0.01);
-			
-			//this.imprimePesos(rede);
-			//System.out.println("================");
 
 		}
 
@@ -120,9 +76,6 @@ public class Resilientpropagation {
 			this.armazenaPesos(rede);
 			this.armazenaErros(rede, entradas, saidas);
 			
-			//this.imprimePesos(rede);
-			//System.out.println("================");
-
 		}
 		
 		return rede;
@@ -353,6 +306,7 @@ public class Resilientpropagation {
 		
 		return erro;
 	}
+	
 	private void armazenaErros(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas){
 		
 		double erro = this.calcularErro(rede, entradas, saidas);
@@ -381,34 +335,19 @@ public class Resilientpropagation {
 		
 	}
 	
-	private boolean pararTreinamento(int ciclos, double precisao){
-		boolean parar = false;
+	private boolean executarTreinamento(int ciclos, double precisao){
+		boolean treina = true;
 
 		if(this.erros.size() >= ciclos){
 			double erro = this.erros.get((erros.size()-ciclos)) - this.erros.get((erros.size()-1));
 			if(erro < precisao){
-				parar = true;
+				treina = false;
 			}
 		}
 		
-		return parar;
+		return treina;
 	}
 	
-//	private void imprimePesos(RedeNeural rede) {
-//		Camada[] camadas = rede.getCamadas();
-//		for (int c = 0; c < camadas.length; c++) {
-//			Camada camada = camadas[c];
-//			System.out.println("Camada: "+c);
-//			System.out.println("Bias: "+ camada.getBiasCamada());
-//			for(double[] pesos : camada.getPesosCamada()) {
-//				for (double d : pesos) {
-//					System.out.printf("%.2f ", d);
-//				}
-//				System.out.println();
-//			}
-//		}
-//	}
-
 	public List<double[]> getBiasTreinamento() {
 		return biasTreinamento;
 	}
