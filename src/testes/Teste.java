@@ -43,7 +43,7 @@ public class Teste {
 		treinamento.treinamentoRede(rede, entradas, saidas, 1000);
 		
 		Util.escreverPesos(caminho+"Resultados/ph2/segmentacao/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
-		Util.escreverErros(caminho+"Resultados/ph2/segmentacao/erros.txt", treinamento.getErros());
+		Util.escreverErros(caminho+"Resultados/ph2/segmentacao/erros.txt", treinamento.getErrosTreinamento());
 		
 		for (int i = 1; i <= 200; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"ph2Reduzida/"+i+".bmp");
@@ -80,7 +80,7 @@ public class Teste {
 		treinamento.treinamentoRede(rede, entradas, saidas, 100);
 		
 		Util.escreverPesos(caminho+"Resultados/berkeley/sobel/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
-		Util.escreverErros(caminho+"Resultados/berkeley/sobel/erros.txt", treinamento.getErros());
+		Util.escreverErros(caminho+"Resultados/berkeley/sobel/erros.txt", treinamento.getErrosTreinamento());
 		
 		for (int i = 1; i <= 20; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"base/"+i+".bmp");
@@ -117,7 +117,7 @@ public class Teste {
 		treinamento.treinamentoRede(rede, entradas, saidas, 200);
 		
 		Util.escreverPesos(caminho+"Resultados/berkeley/sobelVertical/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
-		Util.escreverErros(caminho+"Resultados/berkeley/sobelVertical/erros.txt", treinamento.getErros());
+		Util.escreverErros(caminho+"Resultados/berkeley/sobelVertical/erros.txt", treinamento.getErrosTreinamento());
 		
 		for (int i = 1; i <= 20; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"base/"+i+".bmp");
@@ -154,7 +154,7 @@ public class Teste {
 		treinamento.treinamentoRede(rede, entradas, saidas, 100);
 		
 		Util.escreverPesos(caminho+"Resultados/berkeley/sobelHorizontal/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
-		Util.escreverErros(caminho+"Resultados/berkeley/sobelHorizontal/erros.txt", treinamento.getErros());
+		Util.escreverErros(caminho+"Resultados/berkeley/sobelHorizontal/erros.txt", treinamento.getErrosTreinamento());
 		
 		for (int i = 1; i <= 20; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"base/"+i+".bmp");
