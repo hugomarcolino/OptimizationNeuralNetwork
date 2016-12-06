@@ -23,27 +23,36 @@ public class Teste {
 	
 	public static void testePH2Segmentacao() throws Exception {
 
-		ArrayList<double[][]> entradas = new ArrayList<double[][]>();
-		ArrayList<double[][]> saidas = new ArrayList<double[][]>();
+		ArrayList<double[][]> entradasTreinamento = new ArrayList<double[][]>();
+		ArrayList<double[][]> saidasTreinamento = new ArrayList<double[][]>();
 		
-		for (int i = 1; i <= 5; i++) {
+		ArrayList<double[][]> entradasValidacao = new ArrayList<double[][]>();
+		ArrayList<double[][]> saidasValidacao = new ArrayList<double[][]>();
+		
+		for (int i = 1; i <= 10; i++) {
 			double[][] entrada = Util.lerImagem(caminho+"ph2Reduzida/"+i+".bmp");
 			double[][] saida = Util.lerImagem(caminho+"ph2Reduzida/"+i+"_gt.bmp");
 			
 			entrada = Util.dividirMatriz(entrada, 255);
 			//saida = Util.dividirMatriz(saida, 255);			
 			
-			entradas.add(entrada);
-			saidas.add(saida);
+			if(i <= 5) {				
+				entradasTreinamento.add(entrada);
+				saidasTreinamento.add(saida);
+			} else {
+				entradasValidacao.add(entrada);
+				saidasValidacao.add(saida);
+			}
 		}
 		
 		RedeNeural rede = new RedeNeural(360, 360, 1, 3, 0);
 		
 		Resilientpropagation treinamento = new Resilientpropagation();
-		treinamento.treinamentoRede(rede, entradas, saidas, 1000);
+		treinamento.treinamentoRede(rede, entradasTreinamento, saidasTreinamento, entradasValidacao, saidasValidacao);
 		
 		Util.escreverPesos(caminho+"Resultados/ph2/segmentacao/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
-		Util.escreverErros(caminho+"Resultados/ph2/segmentacao/erros.txt", treinamento.getErrosTreinamento());
+		Util.escreverErros(caminho+"Resultados/ph2/segmentacao/errosTreinamento.txt", treinamento.getErrosTreinamento());
+		Util.escreverErros(caminho+"Resultados/ph2/segmentacao/errosValidacao.txt", treinamento.getErrosValidacao());
 		
 		for (int i = 1; i <= 200; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"ph2Reduzida/"+i+".bmp");
