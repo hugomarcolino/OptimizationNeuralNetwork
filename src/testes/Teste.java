@@ -117,7 +117,9 @@ public class Teste {
 		treinamento.treinamentoRede(rede, entradas, saidas, 200);
 		
 		Util.escreverPesos(caminho+"Resultados/berkeley/sobelVertical/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
-		Util.escreverErros(caminho+"Resultados/berkeley/sobelVertical/erros.txt", treinamento.getErrosTreinamento());
+		Util.escreverErros(caminho+"Resultados/berkeley/sobelVertical/errosTreinamento.txt", treinamento.getErrosTreinamento());
+		Util.escreverErros(caminho+"Resultados/berkeley/sobelVertical/errosValidacao.txt", treinamento.getErrosValidacao());
+
 		
 		for (int i = 1; i <= 20; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"base/"+i+".bmp");

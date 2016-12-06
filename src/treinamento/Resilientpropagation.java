@@ -369,7 +369,7 @@ public class Resilientpropagation {
 		return errosTreinamento;
 	}
 	
-	public List<Double> getErrosVlaidacao() {
+	public List<Double> getErrosValidacao() {
 		return errosValidacao;
 	}
 }
