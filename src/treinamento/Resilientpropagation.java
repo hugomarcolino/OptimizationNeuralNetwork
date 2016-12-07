@@ -33,7 +33,7 @@ public class Resilientpropagation {
 		
 		int ciclo = 0;
 		
-		while ( this.validacaoCruzada(100, 0.001) ) {
+		while ( this.validacaoCruzada(100, 0.00) ) {
 			System.out.println("Ciclo: "+ciclo++);
 			Collections.shuffle(ordemTreino);
 			

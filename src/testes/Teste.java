@@ -14,8 +14,8 @@ public class Teste {
 	public static void main(String[] args) throws Exception {
 		
 		//testeBerkeleySobel();
-		testeBerkeleySobelVertical();
-		//testeBerkeleySobelHorizontal();
+		//testeBerkeleySobelVertical();
+		testeBerkeleySobelHorizontal();
 		
 		//testePH2Segmentacao();
 		
