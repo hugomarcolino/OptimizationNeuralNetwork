@@ -14,7 +14,7 @@ public class Teste {
 	public static void main(String[] args) throws Exception {
 		
 		//testeBerkeleySobel();
-		testeBerkeleySobelVertical();
+		//testeBerkeleySobelVertical();
 		testeBerkeleySobelHorizontal();
 		
 		//testePH2Segmentacao();
@@ -124,14 +124,14 @@ public class Teste {
 		ArrayList<double[][]> saidasValidacao = new ArrayList<double[][]>();
 	
 		
-		for (int i = 1; i <= 4; i++) {
+		for (int i = 1; i <= 2; i++) {
 			double[][] entrada = Util.lerImagem(caminho+"base/"+i+".bmp");
 			double[][] saida = Util.lerImagem(caminho+"baseSobel/"+i+"_sobelVertical.bmp");
 			
 			entrada = Util.dividirMatriz(entrada, 255);
 			saida = Util.dividirMatriz(saida, 255);			
 			
-			if(i <= 2){
+			if(i <= 1){
 				entradasTreinamento.add(entrada);
 				saidasTreinamento.add(saida);
 			} else {
@@ -172,14 +172,14 @@ public class Teste {
 		ArrayList<double[][]> saidasValidacao = new ArrayList<double[][]>();
 	
 		
-		for (int i = 1; i <= 4; i++) {
+		for (int i = 1; i <= 2; i++) {
 			double[][] entrada = Util.lerImagem(caminho+"base/"+i+".bmp");
 			double[][] saida = Util.lerImagem(caminho+"baseSobel/"+i+"_sobelHorizontal.bmp");
 			
 			entrada = Util.dividirMatriz(entrada, 255);
 			saida = Util.dividirMatriz(saida, 255);			
 			
-			if(i <= 2){
+			if(i <= 1){
 				entradasTreinamento.add(entrada);
 				saidasTreinamento.add(saida);
 			} else {
@@ -189,6 +189,21 @@ public class Teste {
 		}
 		
 		RedeNeural rede = new RedeNeural(315, 477, 1, 3, 0);
+		
+		//SETAR PESOS
+		double[] pesos = {
+				0.89, 0.77, 0.46, 
+				0.86, 0.88, 0.89, 
+				0.70, 0.62, 0.58, 
+				
+				0.63, 0.48, 0.87, 
+				0.43, 0.68, 0.67, 
+				0.42, 0.65, 0.71,  
+				
+				0.7597558663317777, 0.44927848321899055};
+		
+		rede.setPesos(pesos);
+		//---
 		
 		Resilientpropagation treinamento = new Resilientpropagation();
 		treinamento.treinamentoRede(rede, entradasTreinamento, saidasTreinamento, entradasValidacao, saidasValidacao);
@@ -211,5 +226,10 @@ public class Teste {
 		}
 	}	
 	
+	
+	private static void setarPesosRedeNeural(RedeNeural rede){
+		
+	
+	}
 	
 }
