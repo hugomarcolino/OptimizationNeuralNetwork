@@ -1,8 +1,10 @@
 package treinamento;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import camada.Camada;
 import jmetal.core.Algorithm;
 import jmetal.core.Operator;
 import jmetal.core.Solution;
@@ -15,9 +17,15 @@ import jmetal.problems.singleObjective.RedeNeuralProblem;
 import jmetal.util.JMException;
 import rede.RedeNeural;
 
-public class OptimizationNeural {
+public class AlgoritmoGenetico {
 	
-	public SolutionSet treinamentoRede(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas,
+	private List<double[]> biasTreinamento = new ArrayList<double[]>();
+	private List<double[][][]> pesosTreinamento = new ArrayList<double[][][]>();
+	
+	private List<Double> errosTreinamento = new ArrayList<Double>();
+	private List<Double> errosValidacao = new ArrayList<Double>();
+	
+	public SolutionSet treinamentoRede( RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas,
 			double taxaCruzamento, double taxaMutacao, int nPopulacao, int nCiclos ) throws ClassNotFoundException, JMException {
 		
 	    //Problem problem;       
@@ -65,8 +73,46 @@ public class OptimizationNeural {
         }
 	    
 	    rede.setPesos(position);
+	    this.armazenaPesos(rede);
 	    
 		return population;
 	}
+	
+	private void armazenaPesos(RedeNeural rede) {
+		
+		double[][][] pesosRede = new double[rede.getCamadas().length][rede.getTamCampo()][rede.getTamCampo()];
+		double[] biasRede = new double[rede.getCamadas().length];
+		
+		Camada[] camadas = rede.getCamadas();
+		for (int c = 0; c < camadas.length; c++ ) {
+			Camada camada = rede.getCamadas()[c];
+			
+			biasRede[c] = camada.getBiasCamada();
+			for (int i = 0; i < pesosRede[c].length; i++) {
+				for (int j = 0; j < pesosRede[c][i].length; j++) {
+					pesosRede[c][i][j] = camada.getPesosCamada()[i][j];
+				}
+			}
+		}
+		
+		this.pesosTreinamento.add(pesosRede);
+		this.biasTreinamento.add(biasRede);
+		
+	}
+	
+	public List<double[]> getBiasTreinamento() {
+		return biasTreinamento;
+	}
 
+	public List<double[][][]> getPesosTreinamento() {
+		return pesosTreinamento;
+	}
+
+	public List<Double> getErrosTreinamento() {
+		return errosTreinamento;
+	}
+	
+	public List<Double> getErrosValidacao() {
+		return errosValidacao;
+	}
 }

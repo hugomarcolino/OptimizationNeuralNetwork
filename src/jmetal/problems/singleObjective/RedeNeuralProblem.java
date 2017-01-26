@@ -53,8 +53,8 @@ public class RedeNeuralProblem extends Problem {
 		upperLimit_ = new double[numberOfVariables_];
 		lowerLimit_ = new double[numberOfVariables_];
 		for (int var = 0; var < numberOfVariables_; var++){
-			lowerLimit_[var] = -5;
-			upperLimit_[var] = 5;
+			lowerLimit_[var] = -1;
+			upperLimit_[var] = 1;
 		} // for
 
 		if (solutionType.compareTo("BinaryReal") == 0)
@@ -95,6 +95,7 @@ public class RedeNeuralProblem extends Problem {
 		rede.setPesos(position);
 
 		double erro = calcularErroDistancia(rede, entradas, saidas);
+		System.out.println(erro);
 
 		return erro;
 	}

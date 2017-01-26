@@ -4,25 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rede.RedeNeural;
-import treinamento.OptimizationNeural;
+import treinamento.AlgoritmoGenetico;
 import util.Util;
 
 public class TesteAG {
 
-	public static String caminho = "C:/Users/User/OneDrive/teste/resultados/";
+	public static String caminho = "C:/Users/Hugo/OneDrive/teste/resultados/";
 
 	public static final double TAXA_CRUZAMENTO  = 1; 
 	public static final double TAXA_MUTACAO     = 0.1; 
 	
-	public static final int    	TAM_POPULACAO   = 100; 
-	public static final int    	MAX_GERACOES  	= 100;
+	public static final int    	TAM_POPULACAO   = 500; 
+	public static final int    	MAX_GERACOES  	= 1000;
 	
 	
 	public static void main(String[] args) throws Exception {
 		
-		testeBerkeleySobel();
-		//testeBerkeleySobelVertical();
-		//testeBerkeleySobelHorizontal();
+		//testeBerkeleySobel();
+		testeBerkeleySobelVertical();
+		testeBerkeleySobelHorizontal();
 		
 		//testePH2Segmentacao();
 		
@@ -46,7 +46,7 @@ public class TesteAG {
 		
 		RedeNeural rede = new RedeNeural(360, 360, 1, 3, 0);
 		
-		OptimizationNeural treinamento = new OptimizationNeural();
+		AlgoritmoGenetico treinamento = new AlgoritmoGenetico();
 		treinamento.treinamentoRede(rede, entradas, saidas,
 				TAXA_CRUZAMENTO, TAXA_MUTACAO, TAM_POPULACAO, MAX_GERACOES);
 		
@@ -81,7 +81,7 @@ public class TesteAG {
 		
 		RedeNeural rede = new RedeNeural(315, 477, 1, 3, 0);
 		
-		OptimizationNeural treinamento = new OptimizationNeural();
+		AlgoritmoGenetico treinamento = new AlgoritmoGenetico();
 		treinamento.treinamentoRede(rede, entradas, saidas,
 								TAXA_CRUZAMENTO, TAXA_MUTACAO, TAM_POPULACAO, MAX_GERACOES);
 		
@@ -116,7 +116,7 @@ public class TesteAG {
 		
 		RedeNeural rede = new RedeNeural(315, 477, 1, 3, 0);
 		
-		OptimizationNeural treinamento = new OptimizationNeural();
+		AlgoritmoGenetico treinamento = new AlgoritmoGenetico();
 		treinamento.treinamentoRede(rede, entradas, saidas,
 				TAXA_CRUZAMENTO, TAXA_MUTACAO, TAM_POPULACAO, MAX_GERACOES);
 		
@@ -151,9 +151,11 @@ public class TesteAG {
 		
 		RedeNeural rede = new RedeNeural(315, 477, 1, 3, 0);
 		
-		OptimizationNeural treinamento = new OptimizationNeural();
+		AlgoritmoGenetico treinamento = new AlgoritmoGenetico();
 		treinamento.treinamentoRede(rede, entradas, saidas, 
 							TAXA_CRUZAMENTO, TAXA_MUTACAO, TAM_POPULACAO, MAX_GERACOES);
+	
+		Util.escreverPesos(caminho+"Resultados/berkeley/sobelHorizontal/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
 		
 		for (int i = 1; i <= 20; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"base/"+i+".bmp");

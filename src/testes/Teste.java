@@ -9,7 +9,7 @@ import util.Util;
 
 public class Teste {
 
-	public static String caminho = "C:/Users/User/OneDrive/teste/resultados/";
+	public static String caminho = "C:/Users/Hugo/OneDrive/teste/resultados/";
 	
 	public static void main(String[] args) throws Exception {
 		
