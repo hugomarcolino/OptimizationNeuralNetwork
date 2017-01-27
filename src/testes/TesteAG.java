@@ -14,15 +14,15 @@ public class TesteAG {
 	public static final double TAXA_CRUZAMENTO  = 1; 
 	public static final double TAXA_MUTACAO     = 0.1; 
 	
-	public static final int    	TAM_POPULACAO   = 500; 
-	public static final int    	MAX_GERACOES  	= 1000;
+	public static final int    	TAM_POPULACAO   = 100; 
+	public static final int    	MAX_GERACOES  	= 500;
 	
 	
 	public static void main(String[] args) throws Exception {
 		
 		//testeBerkeleySobel();
 		testeBerkeleySobelVertical();
-		testeBerkeleySobelHorizontal();
+		//testeBerkeleySobelHorizontal();
 		
 		//testePH2Segmentacao();
 		
