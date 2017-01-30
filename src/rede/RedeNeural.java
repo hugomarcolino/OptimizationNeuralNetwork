@@ -143,4 +143,21 @@ public class RedeNeural {
 		
 	}
 	
+	public void imprimePesos(){
+		  		
+  		for (int c = 0; c < this.getCamadas().length; c++) {
+  			Camada camada = camadas[c];
+  			
+  			for (double[] pesos : camada.getPesosCamada()) {
+				for (double peso : pesos) {
+					System.out.print(peso +", ");
+				}
+			}
+  			
+  			System.out.print(camada.getBiasCamada()+", ");  			
+  		}
+
+		System.out.println();
+	}
+
 }
