@@ -24,7 +24,6 @@ import java.util.List;
 
 import rede.RedeNeural;
 import smile.math.DoubleArrayList;
-import smile.math.distance.EuclideanDistance;
 import smile.math.distance.ManhattanDistance;
 import jmetal.core.Problem;
 import jmetal.core.Solution;
@@ -35,6 +34,8 @@ import jmetal.util.JMException;
 
 public class RedeNeuralProblem extends Problem {
 
+	private static final long serialVersionUID = 1L;
+		
 	List<double[][]> entradas;
 	List<double[][]> saidas;
 	RedeNeural rede;
@@ -54,8 +55,8 @@ public class RedeNeuralProblem extends Problem {
 		upperLimit_ = new double[numberOfVariables_];
 		lowerLimit_ = new double[numberOfVariables_];
 		for (int var = 0; var < numberOfVariables_; var++){
-			lowerLimit_[var] = -1;
-			upperLimit_[var] = 1;
+			lowerLimit_[var] = -2;
+			upperLimit_[var] = 2;
 		} // for
 
 		if (solutionType.compareTo("BinaryReal") == 0)
@@ -94,34 +95,11 @@ public class RedeNeuralProblem extends Problem {
 	public double evaluateRede(double[] position) { 
 
 		rede.setPesos(position);
-
 		double erro = calcularErroDistancia(rede, entradas, saidas);
-		System.out.println(erro);
-
+		
 		return erro;
 	}
-
-	private double calcularErro(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas) {
-
-		double erro = 0;
-		int nSoma = 0;
-		for (int imagem = 0; imagem < entradas.size(); imagem++) {
-			double[][] entrada = entradas.get(imagem);
-			double[][] saidaDesejada = saidas.get(imagem);
-
-			double[][] saida = rede.estimular(entrada);
-			for (int i = 0; i < entrada.length; i++) {
-				for (int j = 0; j < entrada[i].length; j++) {
-					erro += Math.abs(saidaDesejada[i][j] - saida[i][j]);
-					nSoma++;
-				}
-			}
-		}
-		erro /= nSoma;
-
-		return erro;
-	}
-
+	
 	private double calcularErroDistancia(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas) {
 
 		double erro = 0;
@@ -141,12 +119,15 @@ public class RedeNeuralProblem extends Problem {
 				saidaRedeArray.add(saidaRede[linha]);
 			}
 			
-			ManhattanDistance ed = new ManhattanDistance();
-			erro += ed.d(saidaArray.toArray(), saidaRedeArray.toArray());
-			erro /= saidaArray.toArray().length; 
+			ManhattanDistance md = new ManhattanDistance();
+			double distancia = md.d(saidaArray.toArray(), saidaRedeArray.toArray()) / saidaArray.toArray().length;
+			
+			erro += distancia;
 
 		}
-
+		
+		erro /= entradas.size();
+		
 		return erro;
 	}
 

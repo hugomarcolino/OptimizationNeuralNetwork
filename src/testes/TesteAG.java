@@ -1,8 +1,13 @@
 package testes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import jmetal.core.Operator;
+import jmetal.operators.crossover.CrossoverFactory;
+import jmetal.operators.mutation.MutationFactory;
+import jmetal.operators.selection.SelectionFactory;
 import rede.RedeNeural;
 import treinamento.AlgoritmoGenetico;
 import util.Util;
@@ -14,11 +19,26 @@ public class TesteAG {
 	public static final double TAXA_CRUZAMENTO  = 1; 
 	public static final double TAXA_MUTACAO     = 0.1; 
 	
-	public static final int    	TAM_POPULACAO   = 100; 
-	public static final int    	MAX_GERACOES  	= 500;
+	public static final int    TAM_POPULACAO    = 100;
 	
+	public static Operator crossover;
+	public static Operator mutation;
+	public static Operator selection;
 	
 	public static void main(String[] args) throws Exception {
+		
+		HashMap parameters = new HashMap();
+	    parameters.put("probability", TAXA_CRUZAMENTO);
+	    parameters.put("distributionIndex", 20.0);
+	    crossover = CrossoverFactory.getCrossoverOperator("SBXCrossover", parameters);                   
+
+	    parameters = new HashMap();
+	    parameters.put("probability", TAXA_MUTACAO);
+	    parameters.put("distributionIndex", 20.0);
+	    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);                    
+
+	    parameters = new HashMap();
+	    selection = SelectionFactory.getSelectionOperator("BinaryTournament", parameters);
 		
 		//testeBerkeleySobel();
 		testeBerkeleySobelVertical();
@@ -47,8 +67,8 @@ public class TesteAG {
 		RedeNeural rede = new RedeNeural(360, 360, 1, 3, 0);
 		
 		AlgoritmoGenetico treinamento = new AlgoritmoGenetico();
-		treinamento.treinamentoRede(rede, entradas, saidas,
-				TAXA_CRUZAMENTO, TAXA_MUTACAO, TAM_POPULACAO, MAX_GERACOES);
+		treinamento.treinamentoRede(rede, entradas, saidas, entradas, saidas,
+									crossover, mutation, selection, TAM_POPULACAO);
 		
 		for (int i = 1; i <= 200; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"ph2Reduzida/"+i+".bmp");
@@ -82,8 +102,8 @@ public class TesteAG {
 		RedeNeural rede = new RedeNeural(315, 477, 1, 3, 0);
 		
 		AlgoritmoGenetico treinamento = new AlgoritmoGenetico();
-		treinamento.treinamentoRede(rede, entradas, saidas,
-								TAXA_CRUZAMENTO, TAXA_MUTACAO, TAM_POPULACAO, MAX_GERACOES);
+		treinamento.treinamentoRede(rede, entradas, saidas, entradas, saidas,
+									crossover, mutation, selection, TAM_POPULACAO);
 		
 		for (int i = 1; i <= 20; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"base/"+i+".bmp");
@@ -117,8 +137,12 @@ public class TesteAG {
 		RedeNeural rede = new RedeNeural(315, 477, 1, 3, 0);
 		
 		AlgoritmoGenetico treinamento = new AlgoritmoGenetico();
-		treinamento.treinamentoRede(rede, entradas, saidas,
-				TAXA_CRUZAMENTO, TAXA_MUTACAO, TAM_POPULACAO, MAX_GERACOES);
+		treinamento.treinamentoRede(rede, entradas, saidas, entradas, saidas,
+									crossover, mutation, selection, TAM_POPULACAO);
+		
+		Util.escreverPesos(caminho+"Resultados/berkeley/sobelVertical/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
+		Util.escreverErros(caminho+"Resultados/berkeley/sobelVertical/errosTreinamento.txt", treinamento.getErrosTreinamento());
+		Util.escreverErros(caminho+"Resultados/berkeley/sobelVertical/errosValidacao.txt", treinamento.getErrosValidacao());
 		
 		for (int i = 1; i <= 20; i++) {
 			double[][] imagemEntrada = Util.lerImagem(caminho+"base/"+i+".bmp");
@@ -152,8 +176,8 @@ public class TesteAG {
 		RedeNeural rede = new RedeNeural(315, 477, 1, 3, 0);
 		
 		AlgoritmoGenetico treinamento = new AlgoritmoGenetico();
-		treinamento.treinamentoRede(rede, entradas, saidas, 
-							TAXA_CRUZAMENTO, TAXA_MUTACAO, TAM_POPULACAO, MAX_GERACOES);
+		treinamento.treinamentoRede(rede, entradas, saidas, entradas, saidas,
+									crossover, mutation, selection, TAM_POPULACAO);
 	
 		Util.escreverPesos(caminho+"Resultados/berkeley/sobelHorizontal/pesos.txt", treinamento.getPesosTreinamento(), treinamento.getBiasTreinamento());
 		

@@ -226,10 +226,4 @@ public class Teste {
 		}
 	}	
 	
-	
-	private static void setarPesosRedeNeural(RedeNeural rede){
-		
-	
-	}
-	
 }
