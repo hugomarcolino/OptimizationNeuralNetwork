@@ -51,7 +51,7 @@ public class AlgoritmoGenetico {
 		int ciclo = 0;
 		SolutionSet population = algorithm.initPopulation();
 		
-		while ( this.validacaoCruzada(10, 1e-5) ) {
+		while ( this.validacaoCruzada(10, 1e-6) ) {
 			System.out.println("Ciclo: "+ciclo++);
 			Collections.shuffle(ordemTreino);
 			
