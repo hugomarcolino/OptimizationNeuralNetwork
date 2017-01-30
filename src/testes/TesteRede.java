@@ -9,26 +9,30 @@ public class TesteRede {
 	
 	public static void main(String[] args) throws Exception {
 		
+		double[][] entrada = {{0}};
+		double[][] saida = {{1}};
+		
 		RedeNeural rede = new RedeNeural(1, 1, 1, 1, 0);
 		
-		double[][] entradas = {{0}};
-		double[][] saidas = {{1}};
-		
-		double[] pesos = {1, 1,
-						1, 1};
+		//SETAR PESOS
+		double[] pesos = {1, 1, 1, 1};
 		
 		rede.setPesos(pesos);
+		//---
 		
-		Resilientpropagation treinamento = new Resilientpropagation();
-	
-		for (int j = 0; j < 15; j++) {			
-			treinamento.treinarExemplo(rede, entradas, saidas);
-			treinamento.reajustarPesos(rede);
+		Resilientpropagation rprop = new Resilientpropagation();
+		
+		for (int j = 0; j < 20; j++) {
+			
+			rprop.treinarExemplo(rede, entrada, saida);
+			rprop.reajustarPesos(rede);
 
-			treinamento.zerarSensibilidades(rede);
+			rprop.zerarSensibilidades(rede);
+			
+			//rede.imprimeGradientes();
 			rede.imprimePesos();
 		}
 		
-	}
 		
+	}	
 }

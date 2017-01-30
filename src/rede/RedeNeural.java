@@ -6,6 +6,7 @@ import java.util.List;
 import camada.Camada;
 import camada.CamadaConvolucao;
 import camada.CamadaReconstrucao;
+import neuronio.Neuronio;
 
 public class RedeNeural {
 	
@@ -158,6 +159,29 @@ public class RedeNeural {
   		}
 
 		System.out.println();
+	}
+	
+	public void imprimeGradientes(){
+		
+  		for (int c = camadas.length-1; c >= 0; c--) {
+			Camada camada = camadas[c];
+			for (Neuronio[] neuronios : camada.getNeuronios()) {
+				for (Neuronio neuronio : neuronios) {
+					double[][] gradientes = neuronio.getGradientes();
+					
+					for (int i = 0; i < gradientes.length; i++) {
+		  				for (int j = 0; j < gradientes[i].length; j++) {
+		  					System.out.print(gradientes[i][j] + ", "); 
+		  				}
+		  			}
+		 			
+					System.out.print(neuronio.getGradienteBias()+", ");
+					
+				}
+			}
+		}
+
+  		System.out.println();
 	}
 
 }
