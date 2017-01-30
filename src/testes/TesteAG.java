@@ -19,7 +19,7 @@ public class TesteAG {
 	public static final double TAXA_CRUZAMENTO  = 1; 
 	public static final double TAXA_MUTACAO     = 0.1; 
 	
-	public static final int    TAM_POPULACAO    = 100;
+	public static final int    TAM_POPULACAO    = 200;
 	
 	public static Operator crossover;
 	public static Operator mutation;
