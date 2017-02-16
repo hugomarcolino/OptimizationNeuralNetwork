@@ -49,7 +49,7 @@ public class AlgoritmoGenetico {
 		}
 		
 		int ciclo = 0;
-		SolutionSet population = algorithm.initPopulation();
+		//SolutionSet population = algorithm.initPopulation();
 		
 		while ( this.validacaoCruzada(10, 1e-6) ) {
 			System.out.println("Ciclo: "+ciclo++);
@@ -59,10 +59,10 @@ public class AlgoritmoGenetico {
 				int nImagem = ordemTreino.get(j);
 				System.out.println("Treinando.. Imagem "+(nImagem+1));
 				
-			    population = algorithm.iteration(population);
+			    //population = algorithm.iteration(population);
 			}
 			
-			rede = this.setPositionRede(rede, population, tam);
+			//rede = this.setPositionRede(rede, population, tam);
 			
 			this.armazenaPesos(rede);
 			this.armazenaErrosTreinamento(rede, entradasTreino, saidasTreino);

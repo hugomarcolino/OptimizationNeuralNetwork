@@ -6,7 +6,6 @@ import java.util.List;
 import camada.Camada;
 import camada.CamadaConvolucao;
 import camada.CamadaReconstrucao;
-import neuronio.Neuronio;
 
 public class RedeNeural {
 	
@@ -114,7 +113,7 @@ public class RedeNeural {
 		return camadas;
 	}
 	
-	public void setPesos(double[] position){
+public void setPesos(double[] position){
 		
   		int p = 0;
   		
@@ -149,38 +148,16 @@ public class RedeNeural {
   		for (int c = 0; c < this.getCamadas().length; c++) {
   			Camada camada = camadas[c];
   			
-  			for (double[] pesos : camada.getPesosCamada()) {
-				for (double peso : pesos) {
-					System.out.print(peso +", ");
+  			for (int i = 0; i < camada.getPesosCamada().length; i++) {
+				for (int j = 0; j < camada.getPesosCamada()[i].length; j++) {
+					System.out.printf("%.2f, ", camada.getPesosCamada()[i][j]);
 				}
+				System.out.println();
 			}
   			
-  			System.out.print(camada.getBiasCamada()+", ");  			
+  			System.out.printf("%.2f \n",camada.getBiasCamada());
+  			System.out.println();
   		}
-
-		System.out.println();
-	}
-	
-	public void imprimeGradientes(){
-		
-  		for (int c = camadas.length-1; c >= 0; c--) {
-			Camada camada = camadas[c];
-			for (Neuronio[] neuronios : camada.getNeuronios()) {
-				for (Neuronio neuronio : neuronios) {
-					double[][] gradientes = neuronio.getGradientes();
-					
-					for (int i = 0; i < gradientes.length; i++) {
-		  				for (int j = 0; j < gradientes[i].length; j++) {
-		  					System.out.print(gradientes[i][j] + ", "); 
-		  				}
-		  			}
-		 			
-					System.out.print(neuronio.getGradienteBias()+", ");
-					
-				}
-			}
-		}
-
   		System.out.println();
 	}
 

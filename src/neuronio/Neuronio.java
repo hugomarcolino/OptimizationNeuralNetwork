@@ -7,23 +7,23 @@ public abstract class Neuronio {
 	protected double somatorio;
 	protected double saida;
 	
-	protected double[][] pesos;
 	protected double pesoBias;
+	protected double[][] pesos;
 	
-	//TREINAMENTO RPROP
+	//TREINAMENTO
 	protected double sensibilidade;
 	
 	protected double[][] gradientes;
 	protected double gradienteBias;
 	
-	protected double[][] gradientesAnterior;
-	protected double gradienteBiasAnterior;
-	
 	protected double[][] deltas;
 	protected double deltaBias;
 	
-	protected double[][] deltasPeso;
-	protected double deltaPesoBias;	
+	protected double[][] gradientesAnterior;
+	protected double gradienteBiasAnterior;
+	
+	protected double[][] deltasAnterior;
+	protected double deltaBiasAnterior;
 	//--
 	
 	public Neuronio(double[][] pesos, double pesoBias) {
@@ -47,104 +47,114 @@ public abstract class Neuronio {
 		return bias;
 	}
 
-	//TREINAMENTO RPROP
-	public void zerarSensibilidade() {
-		this.sensibilidade = 0;
-	}
-	
+	//TREINAMENTO
 	public void inicializarVariaveis(){
 		this.sensibilidade = 0;
 		
 		this.gradientes = new double[pesos.length][pesos[0].length];
 		this.gradienteBias = 0;
 		
+		this.deltas = new double[pesos.length][pesos[0].length];
+		this.deltaBias = 0;
+		
 		this.gradientesAnterior = new double[pesos.length][pesos[0].length];
 		this.gradienteBiasAnterior = 0;
 		
-		this.deltas = new double[pesos.length][pesos[0].length];
-		for (int i = 0; i < deltas.length; i++) {
-			for (int j = 0; j < deltas[i].length; j++) {				
-				this.deltas[i][j] = 0.1;	
+		this.deltasAnterior = new double[pesos.length][pesos[0].length];
+		for (int i = 0; i < deltasAnterior.length; i++) {
+			for (int j = 0; j < deltasAnterior[i].length; j++) {				
+				this.deltasAnterior[i][j] = 0.1;	
 			}
 		}
-		this.deltaBias = 0.1;
-		
-		this.deltasPeso = new double[pesos.length][pesos[0].length];
-		this.deltaPesoBias = 0;
-
+		this.deltaBiasAnterior = 0.1;
 	}
 	
-	//GET
+	public void zerarSensibilidade() {
+		this.sensibilidade = 0;
+	}
+	
 	public double getSensibilidade() {
 		return sensibilidade;
 	}
 
-	public double getGradienteBias() {
-		return gradienteBias;
+	public void setSensibilidade(double sensibilidade) {
+		this.sensibilidade = sensibilidade;
+	}
+	
+	public void zerarGradientes() {
+		for (int i = 0; i < gradientes.length; i++) {
+			for (int j = 0; j < gradientes[i].length; j++) {
+				this.gradientesAnterior[i][j] = 0;
+				this.gradientes[i][j] = 0;
+			}
+		}
+		this.gradienteBiasAnterior = 0;
+		this.gradienteBias = 0;
 	}
 	
 	public double[][] getGradientes() {
 		return gradientes;
-	}
-	
-	public double getGradienteBiasAnterior() {
-		return gradienteBiasAnterior;
-	}
-	
-	public double[][] getGradientesAnterior() {
-		return gradientesAnterior;
-	}
-	
-	public double getDeltaBias() {
-		return deltaBias;
-	}
-	
-	public double[][] getDeltas() {
-		return deltas;
-	}
-	
-	public double getDeltaPesoBias() {
-		return deltaPesoBias;
-	}
-
-	public double[][] getDeltasPeso() {
-		return deltasPeso;
-	}
-	
-	//SET
-	public void setSensibilidade(double sensibilidade) {
-		this.sensibilidade = sensibilidade;
-	}
-
-	public void setGradienteBias(double gradienteBias) {
-		this.gradienteBias = gradienteBias;
 	}
 
 	public void setGradientes(double[][] gradientes) {
 		this.gradientes = gradientes;
 	}
 
-	public void setGradienteBiasAnterior(double gradienteBiasAnterior) {
-		this.gradienteBiasAnterior = gradienteBiasAnterior;
+	public double getGradienteBias() {
+		return gradienteBias;
+	}
+
+	public void setGradienteBias(double gradienteBias) {
+		this.gradienteBias = gradienteBias;
 	}
 	
-	public void setGradientesAnterior(double[][] gradientesAnterior) {
-		this.gradientesAnterior = gradientesAnterior;
+	public double[][] getDeltas() {
+		return deltas;
 	}
+
+	public void setDeltas(double[][] deltas) {
+		this.deltas = deltas;
+	}
+
+	public double getDeltaBias() {
+		return deltaBias;
+	}
+
 	public void setDeltaBias(double deltaBias) {
 		this.deltaBias = deltaBias;
 	}
-	
-	public void setDeltas(double[][] deltas) {
-		this.deltas = deltas;		
+
+	public double[][] getGradientesAnterior() {
+		return gradientesAnterior;
 	}
 
-	public void setDeltaPesoBias(double deltaPesoBias) {
-		this.deltaPesoBias = deltaPesoBias;
+	public void setGradientesAnterior(double[][] gradientesAnterior) {
+		this.gradientesAnterior = gradientesAnterior;
 	}
-	
-	public void setDeltasPeso(double[][] deltasPeso) {
-		this.deltasPeso = deltasPeso;
+
+	public double getGradienteBiasAnterior() {
+		return gradienteBiasAnterior;
+	}
+
+	public void setGradienteBiasAnterior(double gradienteBiasAnterior) {
+		this.gradienteBiasAnterior = gradienteBiasAnterior;
+	}
+
+	public double[][] getDeltasAnterior() {
+		return deltasAnterior;
+	}
+
+	public void setDeltasAnterior(double[][] deltasAnterior) {
+		this.deltasAnterior = deltasAnterior;
+	}
+
+	public double getDeltaBiasAnterior() {
+		return deltaBiasAnterior;
+	}
+
+	public void setDeltaBiasAnterior(double deltaBiasAnterior) {
+		this.deltaBiasAnterior = deltaBiasAnterior;
 	}
 	//---
+	
 }

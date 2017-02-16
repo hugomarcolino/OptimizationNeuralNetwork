@@ -24,10 +24,10 @@ public class TesteRede {
 		
 		for (int j = 0; j < 20; j++) {
 			
-			rprop.treinarExemplo(rede, entrada, saida);
-			rprop.reajustarPesos(rede);
+			//rprop.treinarRede(rede, entrada, saida);
+			//rprop.reajustarPesos(rede);
 
-			rprop.zerarSensibilidades(rede);
+			//rprop.zerarSensibilidades(rede);
 			
 			//rede.imprimeGradientes();
 			rede.imprimePesos();

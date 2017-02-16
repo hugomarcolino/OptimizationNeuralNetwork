@@ -67,11 +67,13 @@ public abstract class Algorithm implements Serializable {
   public Algorithm(Problem problem) {
   	problem_ = problem ;
   }
- 
   
-  public abstract SolutionSet iteration(SolutionSet population) throws JMException, ClassNotFoundException ;
-  
-  public abstract SolutionSet initPopulation() throws ClassNotFoundException, JMException ;
+ /**   
+  * Launches the execution of an specific algorithm.
+  * @return a <code>SolutionSet</code> that is a set of non dominated solutions
+  * as a result of the algorithm execution  
+  */
+  public abstract SolutionSet execute() throws JMException, ClassNotFoundException ;   
   
  /**
   * Offers facilities for add new operators for the algorithm. To use an

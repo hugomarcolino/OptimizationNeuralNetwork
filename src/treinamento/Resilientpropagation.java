@@ -12,10 +12,10 @@ import neuronio.Neuronio;
 
 public class Resilientpropagation {
 
-	final double deltaMax = 50;
-	final double deltaMin = 1e-6;
-	final double nPos = 1.2;
-	final double nNeg = 0.5;
+	private double deltaMax = 50;
+	private double deltaMin = 0.000001;
+	private double nPos = 1.2;
+	private double nNeg = 0.5;
 	
 	private List<double[]> biasTreinamento = new ArrayList<double[]>();
 	private List<double[][][]> pesosTreinamento = new ArrayList<double[][][]>();
@@ -23,41 +23,74 @@ public class Resilientpropagation {
 	private List<Double> errosTreinamento = new ArrayList<Double>();
 	private List<Double> errosValidacao = new ArrayList<Double>();
 	
-	
-	//REFAZER
-	public RedeNeural treinamentoRede(RedeNeural rede, List<double[][]> entradasTreino, List<double[][]> saidasTreino, 
+	public RedeNeural treinamentoRede(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas, 
 			List<double[][]> entradasValidacao, List<double[][]> saidasValidacao ){
 
 		List<Integer> ordemTreino = new ArrayList<Integer>();
-		for (int i = 0; i < entradasTreino.size(); i++) {
+		for (int i = 0; i < entradas.size(); i++) {
 			ordemTreino.add(i);
 		}
 		
-		int ciclo = 0;
+		int ciclo = 1;
 		
-		while ( this.validacaoCruzada(50, 0.0) ) {
-			System.out.println("Ciclo: "+ciclo++);
-			Collections.shuffle(ordemTreino);
+		while(!pararTreinamento(100, 0.001)){
 			
+			Collections.shuffle(ordemTreino);
+			System.out.println("Ciclo: "+ciclo++);
 			for (int j = 0; j < ordemTreino.size(); j++) {
 				int nImagem = ordemTreino.get(j);
 				System.out.println("Treinando.. Imagem "+(nImagem+1));
-				
-				this.treinarExemplo(rede, entradasTreino.get(nImagem), saidasTreino.get(nImagem));
-				this.reajustarPesos(rede);
-
-				this.zerarSensibilidades(rede);
-				this.armazenaPesos(rede);
+				this.treinarRede(rede, entradas.get(nImagem), saidas.get(nImagem));
+				this.zerarSensibilidades(rede);				
 			}
 			
-			this.armazenaErrosTreinamento(rede, entradasTreino, saidasTreino);
+			this.reajustarPesos(rede);			
+			this.zerarGradientes(rede);
+			
+			this.armazenaPesos(rede);
+			this.armazenaErrosTreinamento(rede, entradas, saidas);
 			this.armazenaErrosValidacao(rede, entradasValidacao, saidasValidacao);
-		}
+			
+			rede.imprimePesos();
+			//System.out.println("================");
 
+		}
+		
 		return rede;
 	}
 
-	public void treinarExemplo(RedeNeural rede, double[][] entradas, double[][] saidas){ 
+
+	public RedeNeural treinamentoRede(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas, int nCiclos){
+		List<Integer> ordemTreino = new ArrayList<Integer>();
+		for (int i = 0; i < entradas.size(); i++) {
+			ordemTreino.add(i);
+		}
+		
+		for (int ciclo = 1 ; ciclo <= nCiclos; ciclo++) {
+			Collections.shuffle(ordemTreino);
+			System.out.println("Ciclo: "+ciclo);
+			for (int j = 0; j < ordemTreino.size(); j++) {
+				int nImagem = ordemTreino.get(j);
+				System.out.println("Treinando.. Imagem "+(nImagem+1));
+				this.treinarRede(rede, entradas.get(nImagem), saidas.get(nImagem));
+				this.zerarSensibilidades(rede);				
+			}
+			
+			this.reajustarPesos(rede);			
+			this.zerarGradientes(rede);
+			
+			this.armazenaPesos(rede);
+			this.armazenaErrosTreinamento(rede, entradas, saidas);
+			
+			rede.imprimePesos();
+			//System.out.println("================");
+
+		}
+		
+		return rede;
+	}
+
+	private void treinarRede(RedeNeural rede, double[][] entradas, double[][] saidas){ 
 		
 		double[][] saidasRede = rede.estimular(entradas);
 		
@@ -79,228 +112,181 @@ public class Resilientpropagation {
 					int jMax = posicoes[3];
 					
 					//CALCULAR SENSIBILIDADE
-					double sensibilidade;
 					if(c == camadas.length-1){
-						sensibilidade =  saidas[i][j] - saidasRede[i][j];
-					} else {
-						sensibilidade = neuronio.getSensibilidade();
+						neuronio.setSensibilidade(saidasRede[i][j] - saidas[i][j]);
+						//neuronio.setSensibilidade(saidas[i][j] - saidasRede[i][j]);
 					}
-					sensibilidade *= neuronio.estimularDerivadaFuncao();
-					neuronio.setSensibilidade(sensibilidade);
-					//---
-					
+					neuronio.setSensibilidade(neuronio.getSensibilidade()*neuronio.estimularDerivadaFuncao());
+			
 					//RETROPROPAGAR SENSIBILIDADE
 					if(c > 0){
 						for (int a=0, x = iMin; x <= iMax; x++, a++) {
 							for (int b=0, y = jMin; y <= jMax; y++, b++) {
 								Neuronio neuronioAnterior = camadaAnterior.getNeuronios()[x][y];
-								double sensibilidadeAnterior = neuronioAnterior.getSensibilidade() + neuronio.getSensibilidade()*pesos[a][b];
-								neuronioAnterior.setSensibilidade(sensibilidadeAnterior);
+								neuronioAnterior.setSensibilidade(neuronioAnterior.getSensibilidade()
+														+ neuronio.getSensibilidade()*pesos[a][b]);
 							}
 						}
 					}
-					//--
 					
-					//CALCULAR GRADIENTES
+					//CALCULAR GRADIENTE
 					double gradienteBias = neuronio.getSensibilidade()*neuronio.getBias();
-					neuronio.setGradienteBias(gradienteBias);
+					neuronio.setGradienteBias(neuronio.getGradienteBias() + gradienteBias);
 					
 					double[][] entradasCamada = c > 0 ? camadaAnterior.getSaidasCamada() : entradas;
 					double[][] entradasNeuronio = camada.getEntradasNeuronio(i, j, entradasCamada);
 					
 					double[][] gradientes = new double[pesos.length][pesos[0].length];
 					for (int x = 0; x < gradientes.length; x++) {
-						for (int y = 0; y < gradientes[x].length; y++) {
-							gradientes[x][y] = neuronio.getSensibilidade()*entradasNeuronio[x][y];
+						for (int y = 0; y < gradientes[x].length; y++) {							
+							gradientes[x][y] = neuronio.getSensibilidade()*entradasNeuronio[x][y]
+												+ neuronio.getGradientes()[x][y];
 						}
 					}
 					neuronio.setGradientes(gradientes);
-					//---
-					
-					//CALCULAR DELTAS
-					this.updateBias(neuronio);
-					
-					for (int a=0, x = iMin; x <= iMax; x++, a++) {
-						for (int b=0, y = jMin; y <= jMax; y++, b++) {
-							this.updatePeso(neuronio, a, b);
-						}
-					}
-					//---
 				}
 			}
 		}
 	}
 	
-	private void updatePeso(Neuronio neuronio, final int x, final int y) {
-
-		double[][] gradientes = neuronio.getGradientes();
-		double[][] gradientesAnterior = neuronio.getGradientesAnterior();
-		
-		final double sinal = Math.signum(gradientes[x][y] * gradientesAnterior[x][y]);
-		double deltaPeso = 0;
-
-		double[][] deltas = neuronio.getDeltas();
-		
-		if (sinal > 0) {
-			double delta = deltas[x][y] * nPos;
-			delta = Math.min(delta, this.deltaMax);
-			deltaPeso = Math.signum(gradientes[x][y]) * delta;
-			deltas[x][y] = delta;
-			gradientesAnterior[x][y] = gradientes[x][y];
-		} else if (sinal < 0) {
-			double delta = deltas[x][y] * nNeg;
-			delta = Math.max(delta, deltaMin);
-			deltas[x][y] = delta;
-			deltaPeso = - neuronio.getDeltasPeso()[x][y];
-			gradientesAnterior[x][y] = 0;
-		} else if (sinal == 0) {
-			final double delta = deltas[x][y];
-			deltaPeso = Math.signum(gradientes[x][y]) * delta;
-			gradientesAnterior[x][y] = gradientes[x][y];
-		}
-
-		neuronio.getDeltasPeso()[x][y] = deltaPeso;
-	}
-	
-	
-	private void updateBias(Neuronio neuronio) {
-
-		double gradienteBias = neuronio.getGradienteBias();
-		double gradienteBiasAnterior = neuronio.getGradienteBiasAnterior();
-		
-		final double sinal = Math.signum(gradienteBias * gradienteBiasAnterior);
-		double deltaPesoBias = 0;
-
-		double deltaBias = neuronio.getDeltaBias();
-		
-		if (sinal > 0) {
-			double delta = deltaBias * nPos;
-			delta = Math.min(delta, this.deltaMax);
-			deltaPesoBias = Math.signum(gradienteBias) * delta;
-			neuronio.setDeltaBias(delta);
-			neuronio.setGradienteBiasAnterior(neuronio.getGradienteBias());
-		} else if (sinal < 0) {
-			double delta = deltaBias * nNeg;
-			delta = Math.max(delta, deltaMin);
-			neuronio.setDeltaBias(delta);
-			deltaPesoBias = - neuronio.getDeltaPesoBias();
-			neuronio.setGradienteBiasAnterior(0);
-		} else if (sinal == 0) {
-			final double delta = deltaBias;
-			deltaPesoBias = Math.signum(gradienteBias) * delta;
-			neuronio.setGradienteBiasAnterior(neuronio.getGradienteBias());
-		}
-
-		neuronio.setDeltaPesoBias(deltaPesoBias);
-	}
-	
-	public void reajustarPesos(RedeNeural rede){
-		
+	private void reajustarPesos(RedeNeural rede){
 		//REAJUSTAR PESOS
 		Camada[] camadas = rede.getCamadas();
-		
 		for (int c = 0; c < camadas.length; c++) {
 			Camada camada = camadas[c];
 			
-			//BIAS
-			double pesoBiasCamada = 0;
-			double atualizaPesoBiasCamada = 0;
+			double biasCamada = camada.getBiasCamada();
+			double[][] pesosCamada = camada.getPesosCamada();
+			
+			double atualizaBiasCamada = 0;
+			double[][] atualizaPesosCamada = new double[pesosCamada.length][pesosCamada[0].length];
 			
 			for (int i = 0; i < camada.getLinhas(); i++) {
 				for (int j = 0; j < camada.getColunas(); j++) {
 					Neuronio neuronio = camada.getNeuronios()[i][j];
-					atualizaPesoBiasCamada += neuronio.getDeltaPesoBias(); 
+					
+					//BIAS
+					double atualizaBias = 0;
+					
+					double sinalBias = Math.signum(neuronio.getGradienteBias()*neuronio.getGradienteBiasAnterior());
+					double sinalGradBias = Math.signum(neuronio.getGradienteBias());
+					if(sinalBias > 0) {
+						double delta = Math.min(neuronio.getDeltaBiasAnterior()*nPos, deltaMax);
+						neuronio.setDeltaBiasAnterior(delta);
+						double atualiza = (-sinalGradBias)*delta;
+						//neuronio.setPesoBias(neuronio.getPesoBias()+atualiza);
+						atualizaBias = atualiza;
+						neuronio.setGradienteBiasAnterior(neuronio.getGradienteBias());
+					} else if(sinalBias < 0) {
+						double delta = Math.max(neuronio.getDeltaBiasAnterior()*nNeg, deltaMin);
+						neuronio.setDeltaBiasAnterior(delta);
+						neuronio.setGradienteBiasAnterior(0.0);
+					} else {
+						double delta = neuronio.getDeltaBiasAnterior();
+						double atualiza = (-sinalGradBias)*delta;
+						//neuronio.setPesoBias(neuronio.getPesoBias()+atualiza);
+						atualizaBias = atualiza;
+						neuronio.setGradienteBiasAnterior(neuronio.getGradienteBias());
+					}
+					//- - -
+					
+					//ACUMULAR BIAS CAMADA
+					atualizaBiasCamada += atualizaBias;
+					//- - -
+					
+					//PESOS
+					double[][] pesos = camada.getPesosNeuronio(i, j);
+					double[][] atualizaPesos = new double[pesos.length][pesos[0].length];
+					
+					for (int x = 0; x < pesos.length; x++) {
+						for (int y = 0; y < pesos[x].length; y++) {							
+							double sinal = Math.signum(neuronio.getGradientes()[x][y]*neuronio.getGradientesAnterior()[x][y]);
+							double sinalGrad = Math.signum(neuronio.getGradientes()[x][y]);
+							if(sinal > 0) {
+								double delta = Math.min(neuronio.getDeltasAnterior()[x][y]*nPos, deltaMax);
+								neuronio.getDeltasAnterior()[x][y] = delta;
+								double atualiza = (-sinalGrad)*delta;
+								atualizaPesos[x][y] = atualiza;
+								neuronio.getGradientesAnterior()[x][y] = neuronio.getGradientes()[x][y];						
+							} else if(sinal < 0) {
+								double delta = Math.max(neuronio.getDeltasAnterior()[x][y]*nNeg, deltaMin);
+								neuronio.getDeltasAnterior()[x][y] = delta;
+								neuronio.getGradientesAnterior()[x][y] = 0.0;
+							} else {
+								double delta = neuronio.getDeltasAnterior()[x][y];
+								double atualiza = (-sinalGrad)*delta;
+								atualizaPesos[x][y] = atualiza;
+								neuronio.getGradientesAnterior()[x][y] = neuronio.getGradientes()[x][y];
+							}
+						}
+					}
+					//- - -
+					
+					//ACUMULAR PESOS CAMADA
+					int[] posicoes = camada.getPosicoesAnterior(i, j);
+					
+					int iMin = posicoes[0];
+					int iMax = posicoes[1];
+					int jMin = posicoes[2];
+					int jMax = posicoes[3];
+					
+					int gap = camada.getTamCampo()-camada.getTamSobreposicao();
+					
+					for (int a=0, x = iMin; x <= iMax; x++, a++) {
+						for (int b=0, y = jMin; y <= jMax; y++, b++) {
+							if(camada instanceof CamadaConvolucao){								
+								atualizaPesosCamada[x - i*gap][y - j*gap] += atualizaPesos[a][b];
+							} else if (camada instanceof CamadaReconstrucao){
+								atualizaPesosCamada[i - x*gap][j - y*gap] += atualizaPesos[a][b]; 
+							}
+						}
+					}
+					//- - - 
 				}
 			}
+			//REAJUSTAR BIAS CAMADA
+			atualizaBiasCamada /= camada.getLinhas()*camada.getColunas();
+			biasCamada += atualizaBiasCamada;
 			
-			atualizaPesoBiasCamada /= camada.getLinhas()*camada.getColunas();
-			pesoBiasCamada = camada.getBiasCamada() + atualizaPesoBiasCamada;
+			camada.setBiasCamada(biasCamada);
+			//- - -
 			
-			camada.setBiasCamada(pesoBiasCamada);
-			
-			//PESOS
-			double[][] pesosCamada = new double[camada.getPesosCamada().length][camada.getPesosCamada()[0].length];
-			double[][] atualizaPesosCamada = new double[camada.getPesosCamada().length][camada.getPesosCamada()[0].length];
-			
+			//REAJUSTAR PESOS CAMADA
 			int tamSobreposicao = camada.getTamSobreposicao();
 			int tamCampo = camada.getTamCampo();
 			
 			int linhasAnt = (camada.getLinhas() - tamSobreposicao)/(tamCampo-tamSobreposicao);
 			int colunasAnt = (camada.getColunas() - tamSobreposicao)/(tamCampo-tamSobreposicao);
 			
-			int gap = tamCampo-tamSobreposicao;
-			
-			for (int i = 0; i < camada.getLinhas(); i++) {
-				for (int j = 0; j < camada.getColunas(); j++) {
-					Neuronio neuronio = camada.getNeuronios()[i][j];
-					
-					int[] posicoes = camada.getPosicoesAnterior(i, j);					
-					int iMin = posicoes[0];
-					int iMax = posicoes[1];
-					int jMin = posicoes[2];
-					int jMax = posicoes[3];					
-					
-					for (int a=0, x = iMin; x <= iMax; x++, a++) {
-						for (int b=0, y = jMin; y <= jMax; y++, b++) {
-							if(camada instanceof CamadaConvolucao) {
-								atualizaPesosCamada[x - i*gap][y - j*gap] += 
-										neuronio.getDeltasPeso()[a][b];
-							} else if(camada instanceof CamadaReconstrucao){
-								atualizaPesosCamada[i - x*gap][j - y*gap] += 
-										neuronio.getDeltasPeso()[a][b];
-							}
-						}
+			for (int x = 0; x < atualizaPesosCamada.length; x++) {
+				for (int y = 0; y < atualizaPesosCamada[x].length; y++) {
+					if (camada instanceof CamadaConvolucao){
+						atualizaPesosCamada[x][y] /= camada.getLinhas()*camada.getColunas();
+						pesosCamada[x][y] += atualizaPesosCamada[x][y];
+					} else if (camada instanceof CamadaReconstrucao){
+						atualizaPesosCamada[x][y] /= linhasAnt*colunasAnt;
+						pesosCamada[x][y] += atualizaPesosCamada[x][y];
 					}
-							
-				}
-			}
-						
-			for (int i = 0; i < atualizaPesosCamada.length; i++) {
-				for (int j = 0; j < atualizaPesosCamada[i].length; j++) {
-					if(camada instanceof CamadaConvolucao){						
-						atualizaPesosCamada[i][j] /= camada.getLinhas()*camada.getColunas();
-					} else if(camada instanceof CamadaReconstrucao){
-						atualizaPesosCamada[i][j] /= linhasAnt*colunasAnt;
-					}
-					pesosCamada[i][j] = camada.getPesosCamada()[i][j] + atualizaPesosCamada[i][j];
 				}
 			}
 			
 			camada.setPesosCamada(pesosCamada);
-			//---
-			
-			//ATUALIZACAO
-			
-			for (int i = 0; i < camada.getLinhas(); i++) {
-				for (int j = 0; j < camada.getColunas(); j++) {
-					Neuronio neuronio = camada.getNeuronios()[i][j];
-					neuronio.setDeltaPesoBias(atualizaPesoBiasCamada); 
-					
-					int[] posicoes = camada.getPosicoesAnterior(i, j);					
-					int iMin = posicoes[0];
-					int iMax = posicoes[1];
-					int jMin = posicoes[2];
-					int jMax = posicoes[3];	
-					
-					for (int a=0, x = iMin; x <= iMax; x++, a++) {
-						for (int b=0, y = jMin; y <= jMax; y++, b++) {
-							if(camada instanceof CamadaConvolucao) {
-								neuronio.getDeltasPeso()[a][b] = atualizaPesosCamada[x - i*gap][y - j*gap]; 
-							} else if(camada instanceof CamadaReconstrucao){
-								neuronio.getDeltasPeso()[a][b] = atualizaPesosCamada[i - x*gap][j - y*gap];
-							}
-						}
-					}
+			//- - -
+		}
+		
+	}
+	
+	private void zerarGradientes(RedeNeural rede) {
+		for (Camada camada : rede.getCamadas()) {
+			for(Neuronio[] neuronios : camada.getNeuronios()) {
+				for(Neuronio neuronio : neuronios) {
+					neuronio.zerarGradientes();
 				}
 			}
-			
-			
-			//---
 		}
-	
 	}
-
-	public void zerarSensibilidades(RedeNeural rede){
+	
+	private void zerarSensibilidades(RedeNeural rede){
 		for (Camada camada : rede.getCamadas()) {
 			for(Neuronio[] neuronios : camada.getNeuronios()) {
 				for(Neuronio neuronio : neuronios) {
@@ -364,19 +350,34 @@ public class Resilientpropagation {
 		
 	}
 	
-	private boolean validacaoCruzada(int ciclos, double precisao){
-		boolean treina = true;
+	private boolean pararTreinamento(int ciclos, double precisao){
+		boolean parar = false;
 
-		if (this.errosValidacao.size() >= ciclos) {
+		if(this.errosValidacao.size() >= ciclos){
 			double erro = this.errosValidacao.get((errosValidacao.size()-ciclos)) - this.errosValidacao.get((errosValidacao.size()-1));
 			if(erro < precisao){
-				treina = false;
+				parar = true;
 			}
 		}
 		
-		return treina;
+		return parar;
 	}
 	
+//	private void imprimePesos(RedeNeural rede) {
+//		Camada[] camadas = rede.getCamadas();
+//		for (int c = 0; c < camadas.length; c++) {
+//			Camada camada = camadas[c];
+//			System.out.println("Camada: "+c);
+//			System.out.println("Bias: "+ camada.getBiasCamada());
+//			for(double[] pesos : camada.getPesosCamada()) {
+//				for (double d : pesos) {
+//					System.out.printf("%.2f ", d);
+//				}
+//				System.out.println();
+//			}
+//		}
+//	}
+
 	public List<double[]> getBiasTreinamento() {
 		return biasTreinamento;
 	}
@@ -388,8 +389,9 @@ public class Resilientpropagation {
 	public List<Double> getErrosTreinamento() {
 		return errosTreinamento;
 	}
-	
+
 	public List<Double> getErrosValidacao() {
 		return errosValidacao;
 	}
+
 }
