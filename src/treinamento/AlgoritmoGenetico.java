@@ -1,166 +1,110 @@
 package treinamento;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
-import camada.Camada;
 import jmetal.core.Algorithm;
 import jmetal.core.Operator;
+import jmetal.core.Solution;
 import jmetal.core.SolutionSet;
-import jmetal.core.Variable;
 import jmetal.metaheuristics.singleObjective.geneticAlgorithm.gGA;
+import jmetal.operators.crossover.CrossoverFactory;
+import jmetal.operators.mutation.MutationFactory;
+import jmetal.operators.selection.SelectionFactory;
 import jmetal.problems.singleObjective.RedeNeuralProblem;
 import jmetal.util.JMException;
 import rede.RedeNeural;
-import smile.math.DoubleArrayList;
-import smile.math.distance.ManhattanDistance;
 
 public class AlgoritmoGenetico {
 	
 	private List<double[]> biasTreinamento = new ArrayList<double[]>();
 	private List<double[][][]> pesosTreinamento = new ArrayList<double[][][]>();
 	
-	private List<Double> errosTreinamento = new ArrayList<Double>();
-	private List<Double> errosValidacao = new ArrayList<Double>();
+	private List<Double> erros = new ArrayList<Double>();
 	
-	public RedeNeural treinamentoRede( RedeNeural rede, List<double[][]> entradasTreino, List<double[][]> saidasTreino,
-										List<double[][]> entradasValidacao, List<double[][]> saidasValidacao,
-										Operator crossover, Operator mutation, Operator selection, int nPopulacao ) throws ClassNotFoundException, JMException {
+	public RedeNeural treinamentoRede(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas,
+			double taxaCruzamento, double taxaMutacao, int nPopulacao, int nCiclos ) throws ClassNotFoundException, JMException {
 
+		
+	    //Problem problem;       
+	    Algorithm algorithm;       
+	    Operator crossover;       
+	    Operator mutation;       
+	    Operator selection;       
 	    
 	    int tam = (int) ((Math.pow(rede.getTamCampo(), 2) + 1)*rede.getCamadas().length);
 	    
 	    RedeNeuralProblem neuralProblem = new RedeNeuralProblem("Real", tam);
 	    
-	    neuralProblem.setEntradas(entradasTreino);
-	    neuralProblem.setSaidas(saidasTreino);
+	    neuralProblem.setEntradas(entradas);
+	    neuralProblem.setSaidas(saidas);
 	    neuralProblem.setRede(rede);
 	    
-	    Algorithm algorithm = new gGA(neuralProblem);
+	    algorithm = new gGA(neuralProblem);
 	    algorithm.setInputParameter("populationSize", nPopulacao);
+	    algorithm.setInputParameter("maxEvaluations", nCiclos*nPopulacao);
+
+	    HashMap parameters = new HashMap();
+	    parameters.put("probability", taxaCruzamento);
+	    parameters.put("distributionIndex", 20.0) ;
+	    crossover = CrossoverFactory.getCrossoverOperator("SBXCrossover", parameters);                   
+
+	    parameters = new HashMap();
+	    parameters.put("probability", taxaMutacao) ;
+	    parameters.put("distributionIndex", 20.0) ;
+	    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);                    
+
+	    parameters = new HashMap();
+	    selection = SelectionFactory.getSelectionOperator("BinaryTournament", parameters) ;                            
+	    
 	    algorithm.addOperator("crossover", crossover);
 	    algorithm.addOperator("mutation", mutation);
 	    algorithm.addOperator("selection", selection);
-
-	    List<Integer> ordemTreino = new ArrayList<Integer>();
-		for (int i = 0; i < entradasTreino.size(); i++) {
-			ordemTreino.add(i);
-		}
+	 
+	    SolutionSet population = algorithm.execute();
+	    
+	    System.out.println("Objectives values have been writen to file FUN");
+	    population.printObjectivesToFile("FUN");
+	    System.out.println("Variables values have been writen to file VAR");
+	    population.printVariablesToFile("VAR");          
 		
-		int ciclo = 0;
-		//SolutionSet population = algorithm.initPopulation();
+	    List<Solution> solutionsList_ = population.getSolutionsList_();
+	    int numberOfVariables = solutionsList_.get(0).getDecisionVariables().length ;
+	    double[] position = new double[tam];
+	    for (int j = 0; j < numberOfVariables; j++) {
+	    	position[j] = solutionsList_.get(0).getDecisionVariables()[j].getValue();
+        }
 		
-		while ( this.validacaoCruzada(10, 1e-6) ) {
-			System.out.println("Ciclo: "+ciclo++);
-			Collections.shuffle(ordemTreino);
-			
-			for (int j = 0; j < ordemTreino.size(); j++) {
-				int nImagem = ordemTreino.get(j);
-				System.out.println("Treinando.. Imagem "+(nImagem+1));
-				
-			    //population = algorithm.iteration(population);
-			}
-			
-			//rede = this.setPositionRede(rede, population, tam);
-			
-			this.armazenaPesos(rede);
-			this.armazenaErrosTreinamento(rede, entradasTreino, saidasTreino);
-			this.armazenaErrosValidacao(rede, entradasValidacao, saidasValidacao);
-		}
+	    //SETAR PESOS
+  		int  p = 0;
+  		
+  		List<Double> biasCamada = new ArrayList<Double>();
+  		List<double[][]> pesosCamadas = new ArrayList<double[][]>();
+  		
+  		for (int c = 0; c < rede.getCamadas().length; c++) {			
+  			double[][] pesosCamada = new double[rede.getTamCampo()][rede.getTamCampo()];
+  			
+  			for (int i = 0; i < pesosCamada.length; i++) {
+  				for (int j = 0; j < pesosCamada.length; j++) {
+  					pesosCamada[i][j] = position[p++]; 
+  				}
+  			}
+  			pesosCamadas.add(pesosCamada);
+  		}
+  		
+  		for (int c = 0; c < rede.getCamadas().length; c++) {			
+  			biasCamada.add(position[p++]);
+  		}
+  		
+  		for (int c = 0; c < rede.getCamadas().length; c++) {
+  			rede.getCamadas()[c].setPesosCamada(pesosCamadas.get(c));
+  			rede.getCamadas()[c].setBiasCamada(biasCamada.get(c));
+  		}
+  		//---
+	    
 	    
 		return rede;
-	}
-	
-	private RedeNeural setPositionRede(RedeNeural rede, SolutionSet population, int tam) throws JMException{
-		
-		
-		Variable[] bestSolution = population.get(0).getDecisionVariables();
-		double[] position = new double[bestSolution.length];
-		for (int i = 0; i < bestSolution.length; i++) {
-			position[i] = bestSolution[i].getValue();
-		}
-		
-		rede.setPesos(position);
-		
-		return rede;
-	}
-	
-	private double calcularErro(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas) {
-
-		double erro = 0;
-
-		for (int i = 0; i < entradas.size(); i++) {
-
-			double[][] entrada = entradas.get(i);
-			double[][] saida = saidas.get(i);
-
-			double[][] saidaRede = rede.estimular(entrada);
-
-			DoubleArrayList saidaArray = new DoubleArrayList();
-			DoubleArrayList saidaRedeArray = new DoubleArrayList();
-
-			for (int linha = 0; linha < saida.length; linha++) {
-				saidaArray.add(saida[linha]);
-				saidaRedeArray.add(saidaRede[linha]);
-			}
-			
-			ManhattanDistance md = new ManhattanDistance();
-			erro += md.d(saidaArray.toArray(), saidaRedeArray.toArray()) / saidaArray.toArray().length;
-
-		}
-		
-		erro /= entradas.size(); 
-		
-		return erro;
-	}
-
-	
-	private void armazenaErrosTreinamento(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas){
-		
-		double erro = this.calcularErro(rede, entradas, saidas);
-		this.errosTreinamento.add(erro);
-	}
-	
-	private void armazenaErrosValidacao(RedeNeural rede, List<double[][]> entradas, List<double[][]> saidas){
-		
-		double erro = this.calcularErro(rede, entradas, saidas);
-		this.errosValidacao.add(erro);
-	}
-
-	private void armazenaPesos(RedeNeural rede) {
-		
-		double[][][] pesosRede = new double[rede.getCamadas().length][rede.getTamCampo()][rede.getTamCampo()];
-		double[] biasRede = new double[rede.getCamadas().length];
-		
-		Camada[] camadas = rede.getCamadas();
-		for (int c = 0; c < camadas.length; c++ ) {
-			Camada camada = rede.getCamadas()[c];
-			
-			biasRede[c] = camada.getBiasCamada();
-			for (int i = 0; i < pesosRede[c].length; i++) {
-				for (int j = 0; j < pesosRede[c][i].length; j++) {
-					pesosRede[c][i][j] = camada.getPesosCamada()[i][j];
-				}
-			}
-		}
-		
-		this.pesosTreinamento.add(pesosRede);
-		this.biasTreinamento.add(biasRede);
-		
-	}
-	
-	private boolean validacaoCruzada(int ciclos, double precisao){
-		boolean treina = true;
-
-		if (this.errosValidacao.size() >= ciclos) {
-			double erro = this.errosValidacao.get((errosValidacao.size()-ciclos)) - this.errosValidacao.get((errosValidacao.size()-1));
-			if(erro < precisao){
-				treina = false;
-			}
-		}
-		
-		return treina;
 	}
 	
 	public List<double[]> getBiasTreinamento() {
@@ -171,11 +115,7 @@ public class AlgoritmoGenetico {
 		return pesosTreinamento;
 	}
 
-	public List<Double> getErrosTreinamento() {
-		return errosTreinamento;
-	}
-	
-	public List<Double> getErrosValidacao() {
-		return errosValidacao;
+	public List<Double> getErros() {
+		return erros;
 	}
 }
