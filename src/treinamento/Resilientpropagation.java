@@ -82,7 +82,7 @@ public class Resilientpropagation {
 			this.armazenaPesos(rede);
 			this.armazenaErrosTreinamento(rede, entradas, saidas);
 			
-			rede.imprimePesos();
+			//rede.imprimePesos();
 			//System.out.println("================");
 
 		}
