@@ -156,7 +156,11 @@ public class Util {
 	
 	public static double gerarAleatorio(){
 		Random random = new Random();
-		double num = random.nextDouble()*0.5;
+		
+		double min = 0;
+		double max = 0.5;
+		
+		double num = (random.nextDouble() + min)*(max - min);
 		
 		return num;
 	}
